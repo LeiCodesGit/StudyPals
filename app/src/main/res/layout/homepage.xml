@@ -53,20 +53,21 @@
             android:layout_height="240dp"
             android:layout_gravity="center_horizontal"
             app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="32dp"
+            app:cardCornerRadius="120dp"
             app:cardElevation="4dp">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/petEmoji"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <ImageView
+                    android:id="@+id/petImage"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
                     android:layout_gravity="center"
-                    android:text="🐣"
-                    android:textSize="90sp" />
+                    android:src="@drawable/egg_british"
+                    android:scaleType="fitCenter" />
+
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
