@@ -1,122 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="#8E24AA">
 
-    <RelativeLayout
+    <View
+        android:id="@+id/studyHeader"
         android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:background="@drawable/login_background"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvStudyTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Focus Session"
-            android:textColor="#18004c"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            app:tint="#18004c" />
-    </RelativeLayout>
+        android:layout_marginTop="48dp"
+        android:text="FOCUS MODE"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-        android:layout_width="280dp"
-        android:layout_height="280dp"
-        android:layout_gravity="center">
+        android:id="@+id/petContainer"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/circle_bg"
+        android:padding="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tvStudyTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <ProgressBar
-            android:id="@+id/timerProgressBar"
-            style="?android:attr/progressBarStyleHorizontal"
+        <ImageView
+            android:id="@+id/studyPet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:indeterminate="false"
-            android:max="100"
-            android:progress="100"
-            android:progressDrawable="@drawable/circular_timer_bar" />
+            android:src="@drawable/egg_golden"
+            android:scaleType="fitCenter" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/appLogo"
+        android:layout_width="51dp"
+        android:layout_height="37dp"
+        android:layout_alignParentStart="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/studypals_logo"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/timerCard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/content_card"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/petContainer">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="FOCUS TIME"
+                android:textColor="#555555"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"/>
 
             <TextView
                 android:id="@+id/tvCountdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="25:00"
-                android:textColor="#18004c"
-                android:textSize="64sp"
-                android:textStyle="bold" />
+                android:textColor="#8E24AA"
+                android:textSize="90sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
+                android:includeFontPadding="false" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="STAY FOCUSED"
+                android:layout_marginTop="4dp"
+                android:text="Stay focused to grow your Pal!"
                 android:textColor="#18004c"
-                android:letterSpacing="0.1"
-                android:textSize="14sp" />
+                android:textSize="15sp"
+                android:textStyle="italic" />
+
+            <Button
+                android:id="@+id/btnStartFocus"
+                android:layout_width="280dp"
+                android:layout_height="65dp"
+                android:layout_marginTop="45dp"
+                android:text="START FOCUS"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:backgroundTint="#18004c"
+                app:cornerRadius="32dp"
+                android:background="@drawable/rounded_button"
+                app:icon="@android:drawable/ic_media_play"
+                app:iconSize="24dp"
+                app:iconPadding="12dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/btnQuitSession"
+                android:layout_width="280dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:text="Give Up"
+                android:textStyle="bold"
+                android:textColor="#FF4444"
+                android:textSize="16sp"
+                app:strokeColor="#FF4444"
+                app:strokeWidth="2dp"
+                app:cornerRadius="32dp" />
+
+
+
         </LinearLayout>
-    </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="48dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <View android:layout_width="12dp" android:layout_height="12dp" android:background="#18004c" android:layout_margin="4dp"/>
-        <View android:layout_width="12dp" android:layout_height="12dp" android:background="#EADDFF" android:layout_margin="4dp"/>
-        <View android:layout_width="12dp" android:layout_height="12dp" android:background="#EADDFF" android:layout_margin="4dp"/>
-        <View android:layout_width="12dp" android:layout_height="12dp" android:background="#EADDFF" android:layout_margin="4dp"/>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Round 1 of 4"
-        android:textColor="#808080" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnPause"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:text="PAUSE SESSION"
-        android:textColor="#18004c"
-        app:strokeColor="#18004c"
-        app:strokeWidth="2dp"
-        app:backgroundTint="#FFFFFF"
-        app:cornerRadius="16dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Leaving the app will stop XP gain"
-        android:textColor="#FF5252"
-        android:textSize="12sp" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
