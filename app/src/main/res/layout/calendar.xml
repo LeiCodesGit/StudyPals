@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vivid_lavender">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/login_background"
+        android:scaleType="centerCrop" />
+
+    <ImageView
+        android:id="@+id/appLogo"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/studypals_logo"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvMonthYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FEBRUARY"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appLogo"
+        android:layout_marginTop="20dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/box_curved_top"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvMonthYear">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="7"
+                android:rowCount="1">
+
+                <TextView android:text="S" android:layout_columnWeight="1" android:gravity="center" android:textColor="#FF5252" android:textStyle="bold"/>
+                <TextView android:text="M" android:layout_columnWeight="1" android:gravity="center" android:textColor="@color/dark_grey"/>
+                <TextView android:text="T" android:layout_columnWeight="1" android:gravity="center" android:textColor="@color/dark_grey"/>
+                <TextView android:text="W" android:layout_columnWeight="1" android:gravity="center" android:textColor="@color/dark_grey"/>
+                <TextView android:text="T" android:layout_columnWeight="1" android:gravity="center" android:textColor="@color/dark_grey"/>
+                <TextView android:text="F" android:layout_columnWeight="1" android:gravity="center" android:textColor="@color/dark_grey"/>
+                <TextView android:text="S" android:layout_columnWeight="1" android:gravity="center" android:textColor="@color/dark_grey"/>
+            </GridLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCalendarGrid"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="16dp"
+                tools:listitem="@layout/item_calendar_day" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:id="@+id/tvSelectedDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 SUN"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/dark_grey"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_add_mood"
+                    app:tint="#DDDDDD" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No tasks for this day"
+                    android:textColor="#BBBBBB"
+                    android:layout_marginTop="10dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnCalendarAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/dark_purple"
+        app:tint="@android:color/white"
+        app:maxImageSize="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
