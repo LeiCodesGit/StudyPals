@@ -3,14 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background"
+    android:background="@android:color/white"
     android:fillViewport="true">
 
     <LinearLayout
         android:id="@+id/homepage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F8F9FA"
         android:orientation="vertical"
         android:padding="20dp">
 
@@ -118,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/startStudyButton"
             android:layout_width="match_parent"
             android:layout_height="64dp"
@@ -137,6 +136,16 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
 
-            <TextView android:layout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Keep up the great work!"
+                android:textColor="#666666" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</ScrollView>
