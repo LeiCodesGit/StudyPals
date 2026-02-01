@@ -43,8 +43,7 @@
             android:layout_height="match_parent"
             android:indeterminate="false"
             android:max="100"
-            android:progress="100"
-            android:progressDrawable="@drawable/circular_timer_bar" />
+            android:progress="100" />
 
         <LinearLayout
             android:layout_width="wrap_content"

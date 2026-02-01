@@ -2,6 +2,7 @@ package com.example.studypals
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -24,14 +25,17 @@ class MainActivity : AppCompatActivity() {
             val email = edtEmail.text.toString().trim()
             val password = edtPassword.text.toString().trim()
 
-            //Validation Check
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
             } else {
-                //Navigate to Homepage (HomeActivity)
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                finish() // Optional: Prevents user from going back to login via back button
+                try {
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } catch (e: Exception) {
+                    //error checking
+                    Log.e("LoginError", "Navigation failed", e)
+                }
             }
         }
 
