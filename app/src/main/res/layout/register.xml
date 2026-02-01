@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/login_background"
+        android:scaleType="centerCrop" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/login_box"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <ImageView
+                android:id="@+id/logo_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:contentDescription="StudyPals Logo"
+                android:src="@drawable/studypals_logo" />
+
+            <TextView
+                android:id="@+id/txt_register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/comfortaa_bold"
+                android:text="Join Study Pals"
+                android:textColor="#18004c"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/first_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#461da1"
+                android:hint="First Name"
+                android:inputType="textPersonName"
+                android:paddingStart="10dp"
+                android:textColor="#461da1" />
+
+            <EditText
+                android:id="@+id/last_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#461da1"
+                android:hint="Last Name"
+                android:inputType="textPersonName"
+                android:paddingStart="10dp"
+                android:textColor="#461da1" />
+
+            <EditText
+                android:id="@+id/age_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#461da1"
+                android:hint="Age"
+                android:inputType="number"
+                android:paddingStart="10dp"
+                android:textColor="#461da1" />
+
+            <EditText
+                android:id="@+id/pet_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#461da1"
+                android:hint="Pet Name"
+                android:inputType="number"
+                android:paddingStart="10dp"
+                android:textColor="#461da1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Choose your Study Pal:"
+                android:textColor="#18004c"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txt_selected_pet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="Your Study Pal:"
+                android:textColor="#18004c"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_open_pet_picker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="#cecece"
+                android:drawablePadding="10dp"
+                android:text="Click to select a pet"
+                android:textAllCaps="false"
+                android:textColor="#2f2d2e" />
+
+            <Button
+                android:id="@+id/registerButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/rounded_button"
+                android:text="Register"
+                android:textColor="#ffff" />
+
+            <TextView
+                android:id="@+id/txt_back_to_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/comfortaa_bold"
+                android:text="Already have an account? Login"
+                android:textColor="@color/link_text_color"
+                android:textSize="14sp"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
