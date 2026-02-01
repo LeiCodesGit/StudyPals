@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background"
-    android:backgroundTint="#461da1"
+    android:background="@android:color/white"
     android:fillViewport="true">
 
     <LinearLayout
@@ -90,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Level 1: Egg"
-                    android:textColor="#18004c"
+                    android:textColor="@android:color/black"
                     android:textStyle="bold" />
 
                 <TextView
@@ -118,19 +117,35 @@
             android:layout_width="match_parent"
             android:layout_height="40dp" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/startStudyButton"
-            android:layout_width="371dp"
-            android:layout_height="74dp"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
             android:text="START STUDY MODE"
-            android:textColor="#18004c"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
-            app:backgroundTint="#461da1"
-            app:cornerRadius="20dp"
+            app:backgroundTint="#18004c"
+            app:cornerRadius="16dp"
             app:icon="@android:drawable/ic_media_play"
             app:iconGravity="textStart"
-            app:iconTint="#461da1" />
+            app:iconTint="#FFFFFF" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Keep up the great work!"
+                android:textColor="#666666" />
+        </RelativeLayout>
 
     </LinearLayout>
 </ScrollView>
-
