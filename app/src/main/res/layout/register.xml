@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/login_background"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/login_background" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -109,17 +108,15 @@
                 android:textStyle="bold"
                 android:visibility="gone" />
 
-            <Button
-                android:id="@+id/btn_open_pet_picker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/rounded_button"
-                android:backgroundTint="#cecece"
-                android:drawablePadding="10dp"
-                android:text="Click to select a pet"
-                android:textAllCaps="false"
-                android:textColor="#2f2d2e" />
+            <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_open_pet_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Click to select a pet"
+            android:textAllCaps="false"
+            android:textColor="@color/dark_purple"
+            android:background="@drawable/rounded_button_grey" />
 
             <Button
                 android:id="@+id/registerButton"
