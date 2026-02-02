@@ -25,6 +25,9 @@
         <activity android:name=".HomeActivity" android:exported="false"/>
         <activity android:name=".TodoActivity" android:exported="false"/>
         <activity android:name=".CalendarActivity" android:exported="false"/>
+        <activity android:name=".StudyModeActivity" android:exported="false"/>
+        <activity android:name=".ChatActivity" android:exported="false"/>
+        <activity android:name=".ProfileActivity" android:exported="false"/>
 
     </application>
 

@@ -16,7 +16,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <ImageView
                 android:id="@+id/appLogo"
                 android:layout_width="120dp"
@@ -24,7 +23,6 @@
                 android:layout_alignParentStart="true"
                 android:scaleType="fitStart"
                 android:src="@drawable/studypals_logo" />
-
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/profileCard"
                 android:layout_width="40dp"
@@ -34,7 +32,6 @@
                 app:cardBackgroundColor="#EADDFF"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -44,9 +41,7 @@
             </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="32dp" />
+        <Space android:layout_width="match_parent" android:layout_height="32dp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="240dp"
@@ -55,11 +50,7 @@
             app:cardBackgroundColor="@android:color/white"
             app:cardCornerRadius="120dp"
             app:cardElevation="4dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
                 <ImageView
                     android:id="@+id/petImage"
                     android:layout_width="180dp"
@@ -67,24 +58,17 @@
                     android:layout_gravity="center"
                     android:src="@drawable/egg_british"
                     android:scaleType="fitCenter" />
-
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="24dp" />
+        <Space android:layout_width="match_parent" android:layout_height="24dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="8dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/levelText"
                     android:layout_width="wrap_content"
@@ -92,7 +76,6 @@
                     android:text="Level 1: Egg"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/xpText"
                     android:layout_width="wrap_content"
@@ -102,7 +85,6 @@
                     android:textColor="#18004c"
                     android:textStyle="bold" />
             </RelativeLayout>
-
             <ProgressBar
                 android:id="@+id/xpProgressBar"
                 style="@android:style/Widget.Material.ProgressBar.Horizontal"
@@ -114,65 +96,59 @@
                 android:progressTint="#18004c" />
         </LinearLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
+        <Space android:layout_width="match_parent" android:layout_height="40dp" />
 
         <Button
-            android:id="@+id/startStudyButton"
+            android:id="@+id/startStudyBtn"
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:text="START STUDY MODE"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            app:backgroundTint="@color/purple"
+            app:backgroundTint="#18004c"
             app:cornerRadius="16dp"
             app:icon="@android:drawable/ic_media_play"
             app:iconGravity="textStart"
             app:iconTint="#FFFFFF" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="32dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Keep up the great work!"
-            android:textColor="#666666" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="32dp" />
+        <Space android:layout_width="match_parent" android:layout_height="32dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <ImageButton
                 android:id="@+id/btnTodo"
                 android:layout_width="0dp"
                 android:layout_height="65dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/rounded_button"
-                android:backgroundTint="@color/purple"
+                android:backgroundTint="#18004c"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_todo_list"
                 app:tint="@android:color/white" />
-
             <ImageButton
                 android:id="@+id/btnCalendar"
                 android:layout_width="0dp"
                 android:layout_height="65dp"
                 android:layout_weight="1"
-                android:layout_marginStart="10dp"
+                android:layout_marginHorizontal="4dp"
                 android:background="@drawable/rounded_button"
-                android:backgroundTint="@color/purple"
+                android:backgroundTint="#18004c"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_calendar"
+                app:tint="@android:color/white" />
+            <ImageButton
+                android:id="@+id/btnMessage"
+                android:layout_width="0dp"
+                android:layout_height="65dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="#18004c"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/stat_notify_chat"
                 app:tint="@android:color/white" />
         </LinearLayout>
 
@@ -181,23 +157,27 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="To-Do"
-                android:textColor="@color/dark_grey" />
-
+                android:textColor="#333333" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Calendar"
-                android:textColor="@color/dark_grey" />
+                android:textColor="#333333" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Message"
+                android:textColor="#333333" />
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>
