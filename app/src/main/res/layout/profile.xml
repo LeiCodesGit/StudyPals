@@ -173,10 +173,11 @@
         android:id="@+id/appLogo"
         android:layout_width="51dp"
         android:layout_height="37dp"
-        android:layout_alignParentStart="true"
         android:scaleType="fitStart"
         android:src="@drawable/studypals_logo"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
