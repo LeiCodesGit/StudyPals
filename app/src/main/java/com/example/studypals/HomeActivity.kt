@@ -11,47 +11,41 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.homepage)
 
-        // 1. Initialize all views
+        //Buttons
         val btnTodo = findViewById<ImageButton>(R.id.btnTodo)
         val btnCalendar = findViewById<ImageButton>(R.id.btnCalendar)
-        val startStudyBtn = findViewById<Button>(R.id.startStudyBtn)
+        val btnStartStudy = findViewById<Button>(R.id.startStudyBtn)
+        val btnChat = findViewById<ImageButton>(R.id.btnMessage)
+        val btnProfile = findViewById<ImageButton>(R.id.profileButton)
 
-        // 2. To-Do Button Click
+        //To-Do Button Click
         btnTodo.setOnClickListener {
             val intent = Intent(this, TodoActivity::class.java)
             startActivity(intent)
         }
 
-        // 3. Calendar Button Click
+        //Calendar Button Click
         btnCalendar.setOnClickListener {
             val intent = Intent(this, CalendarActivity::class.java)
             startActivity(intent)
         }
 
-        // 4. Study Mode Button Click
-        startStudyBtn.setOnClickListener {
+        //Study Mode Button Click
+        btnStartStudy.setOnClickListener {
             val intent = Intent(this, StudyModeActivity::class.java)
             startActivity(intent)
         }
-        // 4. Chat Button Click
 
-        class ChatActivity : AppCompatActivity() {
-            override fun onCreate(savedInstanceState: Bundle?) {
-                super.onCreate(savedInstanceState)
-                setContentView(R.layout.chat)
-
-                // 4. Profile Button Click
-                class ProfileActivity : AppCompatActivity() {
-
-                    override fun onCreate(savedInstanceState: Bundle?) {
-                        super.onCreate(savedInstanceState)
-                        setContentView(R.layout.profile)
-
-                    }
-                }
-            }
+        //Chat Button Click
+        btnChat.setOnClickListener {
+            val intent = Intent(this, StudyModeActivity::class.java)
+            startActivity(intent)
         }
 
-
+        //Profile Button Click
+        btnProfile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
