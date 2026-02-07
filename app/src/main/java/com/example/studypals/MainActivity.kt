@@ -10,6 +10,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private val userRepository = UserRepository()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
@@ -26,15 +29,29 @@ class MainActivity : AppCompatActivity() {
             val password = edtPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
-            } else {
-                try {
-                    val intent = Intent(this, HomeActivity::class.java)
-                    startActivity(intent)
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            userRepository.loginUser(email, password) { isSuccess, exception ->
+                if (isSuccess) {
+                    startActivity(Intent(this, HomeActivity::class.java))
                     finish()
-                } catch (e: Exception) {
-                    //error checking
-                    Log.e("LoginError", "Navigation failed", e)
+                } else {
+                    val message = when (exception) {
+                        is com.google.firebase.auth.FirebaseAuthInvalidUserException ->
+                            "No account found with this email."
+
+                        is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
+                            "Incorrect password. Please try again."
+
+                        is com.google.firebase.FirebaseNetworkException ->
+                            "No internet connection."
+
+                        else -> "Login failed: ${exception?.localizedMessage}"
+                    }
+
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 }
             }
         }
