@@ -30,6 +30,7 @@
         <activity android:name=".StudyModeActivity" android:exported="false"/>
         <activity android:name=".ChatActivity" android:exported="false"/>
         <activity android:name=".ProfileActivity" android:exported="false"/>
+        <activity android:name=".AdminActivity" android:exported="false" />
 
     </application>
 
