@@ -94,5 +94,11 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
+        //Admin
+        btnProfile.setOnClickListener {
+            val intent = Intent(this, AdminActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }
