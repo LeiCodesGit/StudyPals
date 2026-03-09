@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">StudyPals</string>
+
+    <string-array name="pomodoro_modes">
+        <item>Traditional • 25m</item>
+        <item>Deep Work • 50m</item>
+        <item>DeskTime • 52m</item>
+        <item>Mini • 15m</item>
+        <item>Ultradian • 90m</item>
+        <item>For Testing Only • 10s</item>
+    </string-array>
 </resources>
