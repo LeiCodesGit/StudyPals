@@ -35,8 +35,16 @@ class MainActivity : AppCompatActivity() {
 
             userRepository.loginUser(email, password) { isSuccess, exception ->
                 if (isSuccess) {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
+                    // Fetch user data to check for Admin status dynamically
+                    userRepository.getUserData { user, error ->
+                        if (user != null && user.isAdmin) {
+                            Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this, AdminActivity::class.java))
+                        } else {
+                            startActivity(Intent(this, HomeActivity::class.java))
+                        }
+                        finish()
+                    }
                 } else {
                     val message = when (exception) {
                         is com.google.firebase.auth.FirebaseAuthInvalidUserException ->

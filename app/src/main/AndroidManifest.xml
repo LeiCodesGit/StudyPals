@@ -21,11 +21,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>ss
+        </activity>
 
         <activity android:name=".RegisterActivity" android:exported="false"/>
         <activity android:name=".HomeActivity" android:exported="false"/>
         <activity android:name=".TodoActivity" android:exported="false"/>
+        <activity android:name=".AddTaskActivity" android:exported="false"/>
         <activity android:name=".CalendarActivity" android:exported="false"/>
         <activity android:name=".StudyModeActivity" android:exported="false"/>
         <activity android:name=".ChatActivity" android:exported="false"/>
