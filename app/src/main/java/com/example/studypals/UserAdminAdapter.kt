@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
@@ -62,55 +63,70 @@ class UserAdminAdapter(private var userList: MutableList<User>) :
         dialog.setContentView(R.layout.dialog_edit)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
+        // 1. Initialize ALL views based on User attributes
         val etUsername = dialog.findViewById<EditText>(R.id.etEditUsername)
         val etFirstName = dialog.findViewById<EditText>(R.id.etEditFirstName)
         val etLastName = dialog.findViewById<EditText>(R.id.etEditLastName)
+        val etAge = dialog.findViewById<EditText>(R.id.etEditAge)
+        val cbAdmin = dialog.findViewById<CheckBox>(R.id.cbAdminStatus)
+        val etPetName = dialog.findViewById<EditText>(R.id.etEditPetName)
+        val etXP = dialog.findViewById<EditText>(R.id.etEditXP)
         val btnSave = dialog.findViewById<Button>(R.id.btnUpdateUser)
 
+        // 2. Populate UI with User data
         etUsername.setText(user.username)
         etFirstName.setText(user.firstName)
         etLastName.setText(user.lastName)
+        etAge.setText(user.age.toString())
+        cbAdmin.isChecked = user.admin
+        etPetName.setText(user.petName)
+        etXP.setText(user.currentXP.toString())
 
         btnSave.setOnClickListener {
-            val updatedUsername = etUsername.text.toString()
-            val updatedFirstName = etFirstName.text.toString()
-            val updatedLastName = etLastName.text.toString()
+            val newXP = etXP.text.toString().toLongOrNull() ?: user.currentXP
+            // Auto-calculate level: Level 1 for 0-999, Level 2 for 1000+, etc.
+            val newLevel = (newXP / 1000).toInt() + 1
 
             val updates = mapOf(
-                "username" to updatedUsername,
-                "firstName" to updatedFirstName,
-                "lastName" to updatedLastName
+                "username" to etUsername.text.toString(),
+                "firstName" to etFirstName.text.toString(),
+                "lastName" to etLastName.text.toString(),
+                "age" to (etAge.text.toString().toIntOrNull() ?: user.age),
+                "admin" to cbAdmin.isChecked,
+                "petName" to etPetName.text.toString(),
+                "currentXP" to newXP,
+                "level" to newLevel
             )
 
             db.collection("users").document(user.uid)
                 .update(updates)
                 .addOnSuccessListener {
-                    val updatedUser = user.copy(
-                        username = updatedUsername,
-                        firstName = updatedFirstName,
-                        lastName = updatedLastName
+                    // Update local list for immediate UI feedback
+                    userList[position] = user.copy(
+                        username = etUsername.text.toString(),
+                        firstName = etFirstName.text.toString(),
+                        lastName = etLastName.text.toString(),
+                        age = (etAge.text.toString().toIntOrNull() ?: user.age),
+                        admin = cbAdmin.isChecked,
+                        petName = etPetName.text.toString(),
+                        currentXP = newXP,
+                        level = newLevel
                     )
-                    userList[position] = updatedUser
                     notifyItemChanged(position)
-                    Toast.makeText(context, "Changes Saved to Database", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
-                }
-                .addOnFailureListener { e ->
-                    Log.e("UserAdminAdapter", "Error updating user", e)
-                    Toast.makeText(context, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "All User & Pet stats synced!", Toast.LENGTH_SHORT).show()
                 }
         }
 
         dialog.show()
+        val width = (context.resources.displayMetrics.widthPixels * 0.90).toInt()
+        dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun deleteUserFromFirestore(context: Context, user: User, position: Int) {
         db.collection("users").document(user.uid)
             .delete()
             .addOnSuccessListener {
-                // The snapshot listener in AdminActivity will handle the UI update automatically,
-                // but if not using a listener, we remove manually.
-                // Since AdminActivity uses a listener, the list might refresh itself.
                 Toast.makeText(context, "User Deleted", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->

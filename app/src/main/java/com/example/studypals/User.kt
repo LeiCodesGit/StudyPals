@@ -7,7 +7,7 @@ data class User(
     val firstName: String = "",
     val lastName: String = "",
     val age: Int = 0,
-    val isAdmin: Boolean = false,
+    val admin: Boolean = false,
 
     // Pet Attributes
     val petName: String = "",
