@@ -56,6 +56,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/timerCard"
         android:layout_width="match_parent"
@@ -76,29 +77,50 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="FOCUS TIME"
+                android:text="SET FOCUS TIME (MIN)"
                 android:textColor="#555555"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.1"/>
 
-            <TextView
-                android:id="@+id/tvCountdown"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="25:00"
-                android:textColor="#8E24AA"
-                android:textSize="90sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-black"
-                android:includeFontPadding="false" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/etMinutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="25"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:textColor="#8E24AA"
+                    android:textSize="90sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-black"
+                    android:includeFontPadding="false" />
+
+                <TextView
+                    android:id="@+id/tvSeconds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=":00"
+                    android:textColor="#8E24AA"
+                    android:textSize="90sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-black"
+                    android:includeFontPadding="false" />
+            </LinearLayout>
 
             <TextView
+                android:id="@+id/tvHint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Stay focused to grow your Pal!"
+                android:text="Tap numbers to change minutes!"
                 android:textColor="#18004c"
                 android:textSize="15sp"
                 android:textStyle="italic" />
@@ -114,7 +136,6 @@
                 android:textStyle="bold"
                 app:backgroundTint="#18004c"
                 app:cornerRadius="32dp"
-                android:background="@drawable/rounded_button"
                 app:icon="@android:drawable/ic_media_play"
                 app:iconSize="24dp"
                 app:iconPadding="12dp"/>
@@ -131,9 +152,8 @@
                 android:textSize="16sp"
                 app:strokeColor="#FF4444"
                 app:strokeWidth="2dp"
-                app:cornerRadius="32dp" />
-
-
+                app:cornerRadius="32dp"
+                android:visibility="invisible"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

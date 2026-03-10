@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="8dp"
@@ -26,19 +27,19 @@
                 android:id="@+id/tvAdminUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sami"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Sami" />
 
             <TextView
                 android:id="@+id/tvAdminUserEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sam@gmail.com"
                 android:textColor="#E0E0E0"
                 android:textSize="13sp"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                tools:text="sam@gmail.com" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,7 +56,8 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_edit"
-                app:tint="#FFFFFF" />
+                app:tint="#FFFFFF"
+                android:contentDescription="@null" />
 
             <ImageButton
                 android:id="@+id/btnDeleteUser"
@@ -64,7 +66,8 @@
                 android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_delete"
-                app:tint="#FF4444" />
+                app:tint="#FF4444"
+                android:contentDescription="@null" />
         </LinearLayout>
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

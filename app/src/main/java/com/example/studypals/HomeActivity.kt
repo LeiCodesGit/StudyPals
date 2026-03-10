@@ -28,6 +28,7 @@ class HomeActivity : AppCompatActivity() {
         val btnStartStudy = findViewById<Button>(R.id.startStudyBtn)
         val btnChat = findViewById<ImageButton>(R.id.btnMessage)
         val btnProfile = findViewById<ImageButton>(R.id.profileButton)
+        val appLogo = findViewById<ImageView>(R.id.appLogo)
 
         //Fetch Real Data from Firestore
         userRepository.getUserData { user, error ->
@@ -94,9 +95,10 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
-        //Admin
-        btnProfile.setOnClickListener {
-            val intent = Intent(this, AdminActivity::class.java)
+        
+        // App Logo Click (also goes to Profile as requested)
+        appLogo.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
