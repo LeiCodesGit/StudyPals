@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F9FA">
@@ -16,7 +17,7 @@
         android:id="@+id/tvAdminTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User Management"
+        android:text="@string/user_management"
         android:textColor="#FFFFFF"
         android:textSize="26sp"
         android:textStyle="bold"
@@ -35,8 +36,21 @@
         android:paddingBottom="8dp"
         app:layout_constraintTop_toBottomOf="@id/tvAdminTitle">
 
-        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="USER DETAILS" android:textColor="#E0E0E0" android:textSize="12sp" android:textStyle="bold" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ACTIONS" android:textColor="#E0E0E0" android:textSize="12sp" android:textStyle="bold" />
+        <TextView 
+            android:layout_width="0dp" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="@string/user_details" 
+            android:textColor="#E0E0E0" 
+            android:textSize="12sp" 
+            android:textStyle="bold" />
+        <TextView 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:text="@string/actions" 
+            android:textColor="#E0E0E0" 
+            android:textSize="12sp" 
+            android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -48,6 +62,7 @@
         android:paddingTop="16dp"
         android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tableLabels" />
+        app:layout_constraintTop_toBottomOf="@id/tableLabels"
+        tools:listitem="@layout/item_user_admin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

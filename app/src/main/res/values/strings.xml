@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">StudyPals</string>
+    <string name="user_management">User Management</string>
+    <string name="user_details">USER DETAILS</string>
+    <string name="actions">ACTIONS</string>
+    <string name="create_task">Create Task</string>
+    <string name="title_label">Title*</string>
+    <string name="date_label">Date*</string>
+    <string name="time_label">Time*</string>
+    <string name="description_label">Description</string>
+    <string name="create_button">Create</string>
+    <string name="task_name_hint">Task name</string>
+    <string name="type_here_hint">Type here...</string>
 </resources>
