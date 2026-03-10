@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
                 if (isSuccess) {
                     // Fetch user data to check for Admin status dynamically
                     userRepository.getUserData { user, error ->
-                        if (user != null && user.isAdmin) {
+                        if (user != null && user.admin) {
                             Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this, AdminActivity::class.java))
                         } else {
