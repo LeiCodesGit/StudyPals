@@ -1,88 +1,195 @@
 package com.example.studypals
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class StudyModeActivity : AppCompatActivity() {
 
-    private lateinit var etMinutes: EditText
-    private lateinit var tvSeconds: TextView
+    private lateinit var tvCountdown: TextView
     private lateinit var btnStartFocus: Button
     private lateinit var btnQuitSession: Button
     private lateinit var studyPet: ImageView
-    private lateinit var appLogo: ImageView
+    private lateinit var spinnerMode: Spinner
 
-    private var countDownTimer: CountDownTimer? = null
+    private var timer: CountDownTimer? = null
     private var isTimerRunning = false
-    private var timeLeftInMillis: Long = 25 * 60 * 1000 // Default 25 mins
+    private var timeLeftInMillis: Long = 0
 
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    private lateinit var tvPetName: TextView
+    private lateinit var tvLevelLabel: TextView
+    private lateinit var tvExpValue: TextView
+    private lateinit var pbExpBar: ProgressBar
+
     private val userRepository = UserRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.studymode)
 
-        // Initialize Views
-        etMinutes = findViewById(R.id.etMinutes)
-        tvSeconds = findViewById(R.id.tvSeconds)
+        // Initialize UI Components
+        tvCountdown = findViewById(R.id.tvCountdown)
         btnStartFocus = findViewById(R.id.btnStartFocus)
         btnQuitSession = findViewById(R.id.btnQuitSession)
         studyPet = findViewById(R.id.studyPet)
-        appLogo = findViewById(R.id.appLogo)
+        spinnerMode = findViewById(R.id.spinnerPomodoroMode)
 
-        // Load Pet Data
-        loadUserData()
+        tvPetName = findViewById(R.id.tvPetName)
+        tvLevelLabel = findViewById(R.id.tvLevelLabel)
+        tvExpValue = findViewById(R.id.tvExpValue)
+        pbExpBar = findViewById(R.id.pbExpBar)
 
-        // Button Listeners
+        setupSpinner()
+        updatePetVisual()
+
         btnStartFocus.setOnClickListener {
-            if (isTimerRunning) {
-                pauseTimer()
-            } else {
-                startTimer()
-            }
+            if (isTimerRunning) pauseTimer() else startTimer()
         }
 
         btnQuitSession.setOnClickListener {
             resetTimer()
         }
+    }
 
-        appLogo.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
+    private fun setupSpinner() {
+        // Load the array from strings.xml using your custom spinner_item layout
+        val adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.pomodoro_modes,
+            R.layout.spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerMode.adapter = adapter
+
+        spinnerMode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val modes = resources.getStringArray(R.array.pomodoro_modes)
+                val selected = modes[position]
+
+                // Extract minutes from the string ("25" from "Traditional • 25 min")
+                val timeValue = selected.substringAfter("•").trim().filter { it.isDigit() }.toLongOrNull() ?: 25
+
+                timeLeftInMillis = if (selected.contains("s")) {
+                    timeValue * 1000L // 10 seconds
+                } else {
+                    timeValue * 60000L // Minutes
+                }
+                updateCountDownText()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
-    private fun loadUserData() {
-        userRepository.getUserData { user, error ->
-            if (user != null) {
-                val petResId = when (user.petType) {
+    private fun startTimer() {
+        timer = object : CountDownTimer(timeLeftInMillis, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                timeLeftInMillis = millisUntilFinished
+                updateCountDownText()
+            }
+
+            override fun onFinish() {
+                isTimerRunning = false
+                btnStartFocus.text = "START FOCUS"
+                handleSessionComplete()
+            }
+        }.start()
+
+        isTimerRunning = true
+        btnStartFocus.text = "PAUSE"
+        spinnerMode.isEnabled = false // Lock mode selection during focus
+    }
+
+    private fun pauseTimer() {
+        timer?.cancel()
+        isTimerRunning = false
+        btnStartFocus.text = "RESUME"
+    }
+
+    private fun resetTimer() {
+        timer?.cancel()
+        isTimerRunning = false
+        btnStartFocus.text = "START FOCUS"
+        spinnerMode.isEnabled = true
+
+        val selected = spinnerMode.selectedItem.toString()
+        // FIXED parsing logic
+        val minutes = selected.substringAfter("•").trim().filter { it.isDigit() }.toIntOrNull() ?: 25
+        timeLeftInMillis = minutes * 60000L
+        updateCountDownText()
+    }
+
+    private fun updateCountDownText() {
+        val minutes = (timeLeftInMillis / 1000) / 60
+        val seconds = (timeLeftInMillis / 1000) % 60
+        tvCountdown.text = String.format("%02d:%02d", minutes, seconds)
+    }
+
+    private fun handleSessionComplete() {
+        // Calculate XP: 10 XP per study minute
+        val selectedMode = spinnerMode.selectedItem.toString()
+        val minutesEarned = selectedMode.substringAfter("•").trim().filter { it.isDigit() }.toLongOrNull() ?: 0
+        val xpToGain = minutesEarned * 10
+
+        userRepository.getUserData { user, _ ->
+            user?.let {
+                val newXp = it.currentXP + xpToGain
+                val newTotalMinutes = it.totalFocusMinutes + minutesEarned
+
+                // Growth Stages: Egg (1-5), Young (6-15), Adult (16+)
+                // Level up every 1000 XP
+                val newLevel = (newXp / 1000).toInt() + 1
+
+                val updatedUser = it.copy(
+                    currentXP = newXp,
+                    level = if (newLevel > it.level) newLevel else it.level,
+                    totalFocusMinutes = newTotalMinutes
+                )
+
+                FirebaseFirestore.getInstance().collection("users")
+                    .document(it.uid).set(updatedUser)
+                    .addOnSuccessListener {
+                        updatePetVisual()
+                        showSuccessDialog(xpToGain) // Call the new dialog function
+                    }
+            }
+        }
+    }
+
+    private fun updatePetVisual() {
+        userRepository.getUserData { user, _ ->
+            user?.let {
+                // Set the Name and XP
+                tvPetName.text = it.petName
+                val progress = it.currentXP % 1000
+                tvExpValue.text = "$progress / 1000 XP"
+                pbExpBar.progress = progress.toInt()
+
+                // Set the Level Label
+                val stage = when {
+                    it.level < 6 -> "Egg"
+                    it.level < 16 -> "Young"
+                    else -> "Adult"
+                }
+                tvLevelLabel.text = "Level ${it.level}: $stage"
+
+                // Set the Image
+                val petResId = when (it.petType) {
                     "British Shorthair" -> when {
-                        user.level >= 16 -> R.drawable.adult_british
-                        user.level >= 6 -> R.drawable.baby_british
+                        it.level >= 16 -> R.drawable.adult_british
+                        it.level >= 6 -> R.drawable.baby_british
                         else -> R.drawable.egg_british
                     }
                     "Golden Retriever" -> when {
-                        user.level >= 16 -> R.drawable.adult_golden
-                        user.level >= 6 -> R.drawable.baby_golden
+                        it.level >= 16 -> R.drawable.adult_golden
+                        it.level >= 6 -> R.drawable.baby_golden
                         else -> R.drawable.egg_golden
                     }
                     "Maine Coon" -> when {
-                        user.level >= 16 -> R.drawable.adult_mainecoon
-                        user.level >= 6 -> R.drawable.baby_mainecoon
+                        it.level >= 16 -> R.drawable.adult_mainecoon
+                        it.level >= 6 -> R.drawable.baby_mainecoon
                         else -> R.drawable.egg_mainecoon
                     }
                     else -> R.drawable.egg_british
@@ -92,113 +199,40 @@ class StudyModeActivity : AppCompatActivity() {
         }
     }
 
-    private fun startTimer() {
-        // If not running and just starting, get the value from EditText
-        if (countDownTimer == null) {
-            val input = etMinutes.text.toString()
-            if (input.isEmpty()) {
-                Toast.makeText(this, "Please enter minutes", Toast.LENGTH_SHORT).show()
-                return
-            }
-            val minutesInput = input.toLong()
-            if (minutesInput == 0L) {
-                Toast.makeText(this, "Please enter a value greater than 0", Toast.LENGTH_SHORT).show()
-                return
-            }
-            timeLeftInMillis = minutesInput * 60 * 1000
+    override fun onBackPressed() {
+        if (isTimerRunning) {
+            // Show a dialog asking if they want to quit and lose progress
+            Toast.makeText(this, "Session in progress! Finish or Quit to leave.", Toast.LENGTH_SHORT).show()
+        } else {
+            super.onBackPressed() // This finishes StudyModeActivity and returns to Home
         }
-
-        etMinutes.isEnabled = false // Lock editing while running
-        
-        countDownTimer = object : CountDownTimer(timeLeftInMillis, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                timeLeftInMillis = millisUntilFinished
-                updateCountDownText()
-            }
-
-            override fun onFinish() {
-                isTimerRunning = false
-                btnStartFocus.text = "START FOCUS"
-                etMinutes.isEnabled = true
-                handleSessionComplete()
-            }
-        }.start()
-
-        isTimerRunning = true
-        btnStartFocus.text = "PAUSE"
-        btnQuitSession.visibility = View.VISIBLE
     }
 
-    private fun pauseTimer() {
-        countDownTimer?.cancel()
-        isTimerRunning = false
-        btnStartFocus.text = "RESUME"
-    }
+    private fun showSuccessDialog(xpGained: Long) {
+        val builder = android.app.AlertDialog.Builder(this)
 
-    private fun resetTimer() {
-        countDownTimer?.cancel()
-        countDownTimer = null
-        isTimerRunning = false
-        etMinutes.isEnabled = true
-        
-        // Revert to what's in the EditText or default 25
-        val input = etMinutes.text.toString()
-        val minutes = if (input.isNotEmpty()) input.toLong() else 25L
-        timeLeftInMillis = minutes * 60 * 1000
-        
-        updateCountDownText()
-        btnStartFocus.text = "START FOCUS"
-        btnQuitSession.visibility = View.INVISIBLE
-    }
+        // Set the Title and Message
+        builder.setTitle("🎉 Congratulations!")
+        builder.setMessage("You finished your focus session and earned +$xpGained XP for your Pal!")
+        builder.setCancelable(false) // Prevents closing by clicking outside
 
-    private fun updateCountDownText() {
-        val totalSeconds = timeLeftInMillis / 1000
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-
-        etMinutes.setText(minutes.toString())
-        tvSeconds.text = String.format(":%02d", seconds)
-    }
-
-    private fun handleSessionComplete() {
-        val userId = auth.currentUser?.uid ?: return
-        val input = etMinutes.text.toString()
-        val focusMinutes = if (input.isNotEmpty()) input.toLong() else 25L
-        
-        // Reward proportional to time (e.g., 2 XP per minute)
-        val xpReward = focusMinutes * 2
-
-        val userRef = db.collection("users").document(userId)
-
-        db.runTransaction { transaction ->
-            val snapshot = transaction.get(userRef)
-            val currentXP = snapshot.getLong("currentXP") ?: 0L
-            val currentLevel = snapshot.getLong("level")?.toInt() ?: 1
-            
-            var newXP = currentXP + xpReward
-            var newLevel = currentLevel
-
-            if (newXP >= 1000) {
-                newXP -= 1000
-                newLevel++
-            }
-
-            transaction.update(userRef, "currentXP", newXP)
-            transaction.update(userRef, "level", newLevel)
-            transaction.update(userRef, "totalFocusMinutes", FieldValue.increment(focusMinutes))
-            transaction.update(userRef, "lastStudyDate", FieldValue.serverTimestamp())
-
-            null
-        }.addOnSuccessListener {
-            Toast.makeText(this, "Session Complete! +$xpReward XP", Toast.LENGTH_LONG).show()
+        // Option 1: Study Again
+        builder.setPositiveButton("Study Again") { dialog, _ ->
             resetTimer()
-        }.addOnFailureListener {
-            Toast.makeText(this, "Failed to save progress", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
         }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        countDownTimer?.cancel()
+        // Option 2: Go Back to Homepage
+        builder.setNegativeButton("Go Home") { _, _ ->
+            finish() // This closes StudyMode and returns to HomeActivity
+        }
+
+        // Create and Show the dialog
+        val dialog = builder.create()
+        dialog.show()
+
+        // Optional: Style the buttons to match your Purple/Navy theme
+        dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.purple_700))
+        dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.black))
     }
 }

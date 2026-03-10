@@ -2,6 +2,7 @@ package com.example.studypals
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -16,13 +17,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
 
-        // Get UI elements
+        //get UI elements
         val edtEmail = findViewById<EditText>(R.id.email_input)
         val edtPassword = findViewById<EditText>(R.id.password_input)
         val loginButton = findViewById<Button>(R.id.loginButton)
         val txtCreateAccount = findViewById<TextView>(R.id.txt_create_account)
 
-        // Login Button Click
+        //Login Button Click
         loginButton.setOnClickListener {
             val email = edtEmail.text.toString().trim()
             val password = edtPassword.text.toString().trim()
@@ -48,18 +49,22 @@ class MainActivity : AppCompatActivity() {
                     val message = when (exception) {
                         is com.google.firebase.auth.FirebaseAuthInvalidUserException ->
                             "No account found with this email."
+
                         is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
                             "Incorrect password. Please try again."
+
                         is com.google.firebase.FirebaseNetworkException ->
                             "No internet connection."
+
                         else -> "Login failed: ${exception?.localizedMessage}"
                     }
+
                     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 }
             }
         }
 
-        // Create Account navigation
+        //Create Account
         txtCreateAccount.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)

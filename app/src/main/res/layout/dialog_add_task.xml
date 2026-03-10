@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"> <com.google.android.material.card.MaterialCardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="Create Task"
+                android:textColor="#000000"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnCloseTask"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Close"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                app:tint="#000000" />
+        </RelativeLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Title*" android:textColor="#808080" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+        <EditText
+            android:id="@+id/etTaskTitle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_border"
+            android:hint="Task name"
+            android:paddingHorizontal="12dp"
+            android:layout_marginBottom="16dp"
+            android:textSize="14sp"
+            android:inputType="textCapSentences"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Assigned*" android:textColor="#808080" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_border"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/circle_bg"
+                android:backgroundTint="#FF4444"
+                android:gravity="center"
+                android:text="S"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Sami"
+                android:textSize="14sp"
+                android:textColor="#000000"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Date*" android:textColor="#808080" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etTaskDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/edittext_border"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="05.02.2026"
+                    android:textSize="14sp"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:paddingHorizontal="12dp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Time*" android:textColor="#808080" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etTaskTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/edittext_border"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="18:00"
+                    android:textSize="14sp"
+                    android:drawableEnd="@android:drawable/ic_menu_recent_history"
+                    android:paddingHorizontal="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Description" android:textColor="#808080" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+        <EditText
+            android:id="@+id/etTaskDesc"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/edittext_border"
+            android:gravity="top"
+            android:hint="Type here..."
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"
+            android:inputType="textMultiLine"/>
+
+        <Button
+            android:id="@+id/btnCreateTask"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Create"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:backgroundTint="#18004c"
+            app:cornerRadius="12dp" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
