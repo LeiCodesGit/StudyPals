@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="CalendarDatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/dark_purple</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/PurpleButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/PurpleButtonStyle</item>
+    </style>
 
-    <style name="Theme.StudyPals" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="PurpleButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dark_purple</item>
+    </style>
 </resources>
