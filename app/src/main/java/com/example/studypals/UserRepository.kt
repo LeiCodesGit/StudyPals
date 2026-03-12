@@ -14,7 +14,7 @@ class UserRepository {
                     val uid = task.result?.user?.uid ?: ""
 
                     // Explicitly set isAdmin to false for new registrations
-                    val userWithId = user.copy(uid = uid, isAdmin = false)
+                    val userWithId = user.copy(uid = uid, admin = false)
                     db.collection("users").document(uid).set(userWithId)
                         .addOnSuccessListener {
                             onResult(true, null)

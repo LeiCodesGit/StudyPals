@@ -15,32 +15,45 @@
             android:text="Edit User Details"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="#18004c"
             android:layout_marginBottom="16dp"/>
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Username" android:textSize="12sp" />
         <EditText android:id="@+id/etEditUsername" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:layout_marginBottom="10dp" android:padding="8dp"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="First Name" android:textSize="12sp" />
-        <EditText android:id="@+id/etEditFirstName" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:layout_marginBottom="10dp" android:padding="8dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="2">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="4dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="First Name" android:textSize="12sp" />
+                <EditText android:id="@+id/etEditFirstName" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:padding="8dp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="4dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Last Name" android:textSize="12sp" />
+                <EditText android:id="@+id/etEditLastName" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:padding="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Last Name" android:textSize="12sp" />
-        <EditText android:id="@+id/etEditLastName" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:layout_marginBottom="10dp" android:padding="8dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Age" android:textSize="12sp" android:layout_marginTop="10dp"/>
+        <EditText android:id="@+id/etEditAge" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:inputType="number" android:padding="8dp"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Age" android:textSize="12sp" />
-        <EditText android:id="@+id/etEditAge" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:inputType="number" android:layout_marginBottom="10dp" android:padding="8dp"/>
+        <CheckBox android:id="@+id/cbAdminStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Admin Privileges" android:layout_marginTop="10dp"/>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginVertical="10dp"/>
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pet Name" android:textStyle="bold" />
-        <EditText android:id="@+id/etEditPetName" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:layout_marginBottom="10dp" android:padding="8dp"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginVertical="15dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pet &amp; Study Stats" android:textStyle="bold" android:textColor="#18004c"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pet Name" android:textSize="12sp" android:layout_marginTop="8dp"/>
+        <EditText android:id="@+id/etEditPetName" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:padding="8dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Current XP" android:textSize="12sp" android:layout_marginTop="8dp"/>
+        <EditText android:id="@+id/etEditXP" android:layout_width="match_parent" android:layout_height="45dp" android:background="@drawable/login_box" android:inputType="number" android:padding="8dp"/>
 
         <Button
             android:id="@+id/btnUpdateUser"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:text="SAVE CHANGES"
+            android:text="SAVE ALL CHANGES"
             android:backgroundTint="#18004c"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="20dp"/>
     </LinearLayout>
 </ScrollView>

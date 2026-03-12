@@ -31,7 +31,7 @@ class ProfileActivity : AppCompatActivity() {
                 tvEmail.text = user.email
 
                 // 2. Show Admin Button ONLY if user is an admin
-                if (user.isAdmin) {
+                if (user.admin) {
                     btnAdmin.text = "Admin Dashboard"
                     btnAdmin.visibility = View.VISIBLE
                     btnAdmin.setOnClickListener {
