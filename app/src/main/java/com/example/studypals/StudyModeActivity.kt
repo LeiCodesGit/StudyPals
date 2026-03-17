@@ -1,57 +1,145 @@
 package com.example.studypals
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 class StudyModeActivity : AppCompatActivity() {
 
     private lateinit var tvCountdown: TextView
     private lateinit var btnStartFocus: Button
     private lateinit var btnQuitSession: Button
-    private lateinit var studyPet: ImageView
     private lateinit var spinnerMode: Spinner
+
+    // Host UI
+    private lateinit var tvHostUserName: TextView
+    private lateinit var tvHostPetName: TextView
+    private lateinit var tvHostLevelLabel: TextView
+    private lateinit var tvHostExpValue: TextView
+    private lateinit var pbHostExpBar: ProgressBar
+    private lateinit var hostPetImg: ImageView
+
+    // Partner UI
+    private lateinit var partnerDashboard: LinearLayout
+    private lateinit var tvPartnerUserName: TextView
+    private lateinit var tvPartnerPetName: TextView
+    private lateinit var tvPartnerLevelLabel: TextView
+    private lateinit var tvPartnerExpValue: TextView
+    private lateinit var pbPartnerExpBar: ProgressBar
+    private lateinit var partnerPetImg: ImageView
 
     private var timer: CountDownTimer? = null
     private var isTimerRunning = false
     private var timeLeftInMillis: Long = 0
-
-    private lateinit var tvPetName: TextView
-    private lateinit var tvLevelLabel: TextView
-    private lateinit var tvExpValue: TextView
-    private lateinit var pbExpBar: ProgressBar
+    private var isSuccessDialogShowing = false
 
     private val userRepository = UserRepository()
+    private var currentSessionId: String? = null
+    private var sessionListener: ListenerRegistration? = null
+    private var isHost = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.studymode)
 
-        // Initialize UI Components
         tvCountdown = findViewById(R.id.tvCountdown)
         btnStartFocus = findViewById(R.id.btnStartFocus)
         btnQuitSession = findViewById(R.id.btnQuitSession)
-        studyPet = findViewById(R.id.studyPet)
         spinnerMode = findViewById(R.id.spinnerPomodoroMode)
 
-        tvPetName = findViewById(R.id.tvPetName)
-        tvLevelLabel = findViewById(R.id.tvLevelLabel)
-        tvExpValue = findViewById(R.id.tvExpValue)
-        pbExpBar = findViewById(R.id.pbExpBar)
+        tvHostUserName = findViewById(R.id.tvHostUserName)
+        tvHostPetName = findViewById(R.id.tvPetName)
+        tvHostLevelLabel = findViewById(R.id.tvLevelLabel)
+        tvHostExpValue = findViewById(R.id.tvExpValue)
+        pbHostExpBar = findViewById(R.id.pbExpBar)
+        hostPetImg = findViewById(R.id.studyPet)
+
+        partnerDashboard = findViewById(R.id.partnerDashboard)
+        tvPartnerUserName = findViewById(R.id.tvPartnerUserName)
+        tvPartnerPetName = findViewById(R.id.tvPartnerPetName)
+        tvPartnerLevelLabel = findViewById(R.id.tvPartnerLevelLabel)
+        tvPartnerExpValue = findViewById(R.id.tvPartnerExpValue)
+        pbPartnerExpBar = findViewById(R.id.pbPartnerExpBar)
+        partnerPetImg = findViewById(R.id.partnerPet)
 
         setupSpinner()
-        updatePetVisual()
+        updateLocalPetVisual()
 
         btnStartFocus.setOnClickListener {
-            if (isTimerRunning) pauseTimer() else startTimer()
+            if (isTimerRunning) {
+                pauseTimer()
+                updateSessionTimerStatus(false)
+            } else {
+                startTimer()
+                updateSessionTimerStatus(true)
+            }
         }
 
         btnQuitSession.setOnClickListener {
-            resetTimer()
+            handleQuit()
         }
+
+        findViewById<View>(R.id.fabMultiplayer).setOnClickListener {
+            showMultiplayerOptions()
+        }
+    }
+
+    private fun handleQuit() {
+        val message = if (isHost) {
+            "Ending the session will disconnect everyone. Are you sure you want to give up?"
+        } else {
+            "Are you sure you want to leave the study session?"
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Give Up?")
+            .setMessage(message)
+            .setPositiveButton("Yes") { _, _ ->
+                if (isHost && currentSessionId != null) {
+                    // Update status to finished/cancelled so guests know it's over
+                    FirebaseFirestore.getInstance().collection("sessions")
+                        .document(currentSessionId!!)
+                        .update("status", "finished")
+                        .addOnCompleteListener {
+                            exitToHome()
+                        }
+                } else if (!isHost && currentSessionId != null) {
+                    // Just leave the session (remove partner data)
+                    FirebaseFirestore.getInstance().collection("sessions")
+                        .document(currentSessionId!!)
+                        .update(
+                            "partnerId", null,
+                            "partnerName", null,
+                            "partnerPetName", null,
+                            "partnerPetType", null,
+                            "partnerPetLevel", null,
+                            "partnerPetXP", null,
+                            "status", "waiting"
+                        ).addOnCompleteListener {
+                            exitToHome()
+                        }
+                } else {
+                    exitToHome()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun exitToHome() {
+        timer?.cancel()
+        sessionListener?.remove()
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun setupSpinner() {
@@ -66,11 +154,15 @@ class StudyModeActivity : AppCompatActivity() {
         spinnerMode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val modes = resources.getStringArray(R.array.pomodoro_modes)
-
-                // Safety check to prevent IndexOutOfBounds
                 if (position >= 0 && position < modes.size) {
                     val selected = modes[position]
                     parseSelectedTime(selected)
+                    
+                    if (isHost && currentSessionId != null) {
+                        FirebaseFirestore.getInstance().collection("sessions")
+                            .document(currentSessionId!!)
+                            .update("selectedMode", selected)
+                    }
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -78,10 +170,7 @@ class StudyModeActivity : AppCompatActivity() {
     }
 
     private fun parseSelectedTime(selected: String) {
-        // Extract numbers after the bullet point from strings.xml
         val timeValue = selected.substringAfter("•").trim().filter { it.isDigit() }.toLongOrNull() ?: 25
-
-        // Logic for seconds (s) or minutes (m)
         timeLeftInMillis = when {
             selected.contains("s", ignoreCase = true) -> timeValue * 1000L
             else -> timeValue * 60000L
@@ -90,6 +179,7 @@ class StudyModeActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
+        timer?.cancel()
         timer = object : CountDownTimer(timeLeftInMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeftInMillis = millisUntilFinished
@@ -100,6 +190,9 @@ class StudyModeActivity : AppCompatActivity() {
                 isTimerRunning = false
                 btnStartFocus.text = "START FOCUS"
                 handleSessionComplete()
+                if (isHost && currentSessionId != null) {
+                    updateSessionTimerStatus(false)
+                }
             }
         }.start()
 
@@ -111,14 +204,14 @@ class StudyModeActivity : AppCompatActivity() {
     private fun pauseTimer() {
         timer?.cancel()
         isTimerRunning = false
-        btnStartFocus.text = "RESUME"
+        btnStartFocus.text = if (timeLeftInMillis > 0) "RESUME" else "START FOCUS"
     }
 
     private fun resetTimer() {
         timer?.cancel()
         isTimerRunning = false
         btnStartFocus.text = "START FOCUS"
-        spinnerMode.isEnabled = true
+        spinnerMode.isEnabled = isHost || currentSessionId == null
 
         val selected = spinnerMode.selectedItem?.toString() ?: ""
         parseSelectedTime(selected)
@@ -132,9 +225,11 @@ class StudyModeActivity : AppCompatActivity() {
     }
 
     private fun handleSessionComplete() {
+        if (isSuccessDialogShowing) return
+        
         val selectedMode = spinnerMode.selectedItem.toString()
         val minutesEarned = selectedMode.substringAfter("•").trim().filter { it.isDigit() }.toLongOrNull() ?: 0
-        val xpToGain = minutesEarned * 10
+        val xpToGain = if (selectedMode.contains("s", true)) 10L else minutesEarned * 10
 
         userRepository.getUserData { user, _ ->
             user?.let {
@@ -151,79 +246,246 @@ class StudyModeActivity : AppCompatActivity() {
                 FirebaseFirestore.getInstance().collection("users")
                     .document(it.uid).set(updatedUser)
                     .addOnSuccessListener {
-                        updatePetVisual()
+                        updateLocalPetVisual()
                         showSuccessDialog(xpToGain)
+                        
+                        if (currentSessionId != null) {
+                            val updateMap = if (isHost) {
+                                mapOf("hostPetXP" to newXp, "hostPetLevel" to updatedUser.level)
+                            } else {
+                                mapOf("partnerPetXP" to newXp, "partnerPetLevel" to updatedUser.level)
+                            }
+                            FirebaseFirestore.getInstance().collection("sessions")
+                                .document(currentSessionId!!).update(updateMap)
+                        }
                     }
             }
         }
     }
 
-    private fun updatePetVisual() {
+    private fun updateLocalPetVisual() {
         userRepository.getUserData { user, _ ->
             user?.let {
-                tvPetName.text = it.petName
-                val progress = it.currentXP % 1000
-                tvExpValue.text = "$progress / 1000 XP"
-                pbExpBar.progress = progress.toInt()
+                if (currentSessionId == null || isHost) {
+                    tvHostUserName.text = it.username
+                    tvHostPetName.text = it.petName
+                    val progress = (it.currentXP % 1000).toInt()
+                    tvHostExpValue.text = "$progress / 1000 XP"
+                    pbHostExpBar.max = 1000
+                    pbHostExpBar.progress = progress
 
-                val stage = when {
-                    it.level < 6 -> "Egg"
-                    it.level < 16 -> "Young"
-                    else -> "Adult"
+                    val stage = getStage(it.level)
+                    tvHostLevelLabel.text = "Level ${it.level}: $stage"
+                    hostPetImg.setImageResource(getPetResource(it.petType, it.level))
+                } else {
+                    // If guest, local pet is the Partner Dashboard
+                    tvPartnerUserName.text = it.username
+                    tvPartnerPetName.text = it.petName
+                    val progress = (it.currentXP % 1000).toInt()
+                    tvPartnerExpValue.text = "$progress / 1000 XP"
+                    pbPartnerExpBar.max = 1000
+                    pbPartnerExpBar.progress = progress
+                    tvPartnerLevelLabel.text = "Level ${it.level}: ${getStage(it.level)}"
+                    partnerPetImg.setImageResource(getPetResource(it.petType, it.level))
                 }
-                tvLevelLabel.text = "Level ${it.level}: $stage"
-
-                val petResId = when (it.petType) {
-                    "British Shorthair" -> when {
-                        it.level >= 16 -> R.drawable.adult_british
-                        it.level >= 6 -> R.drawable.baby_british
-                        else -> R.drawable.egg_british
-                    }
-                    "Golden Retriever" -> when {
-                        it.level >= 16 -> R.drawable.adult_golden
-                        it.level >= 6 -> R.drawable.baby_golden
-                        else -> R.drawable.egg_golden
-                    }
-                    "Maine Coon" -> when {
-                        it.level >= 16 -> R.drawable.adult_mainecoon
-                        it.level >= 6 -> R.drawable.baby_mainecoon
-                        else -> R.drawable.egg_mainecoon
-                    }
-                    else -> R.drawable.egg_british
-                }
-                studyPet.setImageResource(petResId)
             }
         }
     }
 
-    @Suppress("DEPRECATION")
-    override fun onBackPressed() {
-        if (isTimerRunning) {
-            Toast.makeText(this, "Session in progress! Finish or Quit to leave.", Toast.LENGTH_SHORT).show()
-        } else {
-            super.onBackPressed()
+    private fun getPetResource(type: String, level: Int): Int {
+        return when (type) {
+            "British Shorthair" -> when {
+                level >= 16 -> R.drawable.adult_british
+                level >= 6 -> R.drawable.baby_british
+                else -> R.drawable.egg_british
+            }
+            "Golden Retriever" -> when {
+                level >= 16 -> R.drawable.adult_golden
+                level >= 6 -> R.drawable.baby_golden
+                else -> R.drawable.egg_golden
+            }
+            "Maine Coon" -> when {
+                level >= 16 -> R.drawable.adult_mainecoon
+                level >= 6 -> R.drawable.baby_mainecoon
+                else -> R.drawable.egg_mainecoon
+            }
+            else -> R.drawable.egg_british
         }
     }
 
     private fun showSuccessDialog(xpGained: Long) {
-        val builder = android.app.AlertDialog.Builder(this)
+        if (isSuccessDialogShowing) return
+        isSuccessDialogShowing = true
+        
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("🎉 Congratulations!")
-        builder.setMessage("You finished your focus session and earned +$xpGained XP for your Pal!")
-        builder.setCancelable(false)
-
-        builder.setPositiveButton("Study Again") { dialog, _ ->
+        builder.setMessage("You earned +$xpGained XP for your Pal!")
+        builder.setPositiveButton("OK") { d, _ -> 
+            d.dismiss()
+            isSuccessDialogShowing = false
             resetTimer()
-            dialog.dismiss()
         }
+        builder.setCancelable(false)
+        builder.show()
+    }
 
-        builder.setNegativeButton("Go Home") { _, _ ->
-            finish()
+    private fun showMultiplayerOptions() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Multiplayer Study")
+        val options = arrayOf("Host Session", "Join Session")
+        builder.setItems(options) { _, which ->
+            if (which == 0) hostSession((100000..999999).random().toString())
+            else showJoinDialog()
         }
+        builder.show()
+    }
 
-        val dialog = builder.create()
-        dialog.show()
+    private fun hostSession(code: String) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        userRepository.getUserData { user, _ ->
+            if (user == null) return@getUserData
+            isHost = true
+            val session = Session(
+                roomCode = code,
+                hostId = uid,
+                hostName = user.username,
+                hostPetName = user.petName,
+                hostPetType = user.petType,
+                hostPetLevel = user.level,
+                hostPetXP = user.currentXP,
+                selectedMode = spinnerMode.selectedItem.toString(),
+                status = "waiting"
+            )
+            val sessionRef = FirebaseFirestore.getInstance().collection("sessions").document()
+            currentSessionId = sessionRef.id
+            sessionRef.set(session.copy(sessionId = currentSessionId!!)).addOnSuccessListener {
+                AlertDialog.Builder(this).setTitle("Room Code").setMessage("Share this code: $code").show()
+                startSessionListener(currentSessionId!!)
+            }
+        }
+    }
 
-        dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.purple_700))
-        dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.black))
+    private fun showJoinDialog() {
+        val input = EditText(this)
+        input.hint = "6-digit code"
+        AlertDialog.Builder(this).setTitle("Join Session").setView(input).setPositiveButton("Join") { _, _ ->
+            joinSession(input.text.toString())
+        }.show()
+    }
+
+    private fun joinSession(code: String) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        userRepository.getUserData { user, _ ->
+            if (user == null) return@getUserData
+            isHost = false
+            FirebaseFirestore.getInstance().collection("sessions")
+                .whereEqualTo("roomCode", code).whereEqualTo("status", "waiting")
+                .get().addOnSuccessListener { docs ->
+                    if (!docs.isEmpty) {
+                        val doc = docs.documents[0]
+                        currentSessionId = doc.id
+                        doc.reference.update(
+                            "partnerId", uid,
+                            "partnerName", user.username,
+                            "partnerPetName", user.petName,
+                            "partnerPetType", user.petType,
+                            "partnerPetLevel", user.level,
+                            "partnerPetXP", user.currentXP,
+                            "status", "active"
+                        ).addOnSuccessListener { startSessionListener(currentSessionId!!) }
+                    } else {
+                        Toast.makeText(this, "Session not found", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+    }
+
+    private fun updateSessionTimerStatus(running: Boolean) {
+        if (isHost && currentSessionId != null) {
+            FirebaseFirestore.getInstance().collection("sessions")
+                .document(currentSessionId!!)
+                .update("timerRunning", running)
+        }
+    }
+
+    private fun startSessionListener(sessionId: String) {
+        sessionListener?.remove()
+        sessionListener = FirebaseFirestore.getInstance().collection("sessions")
+            .document(sessionId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+                val session = snapshot.toObject(Session::class.java) ?: return@addSnapshotListener
+
+                // If session ended by host
+                if (session.status == "finished") {
+                    Toast.makeText(this, "The host has ended the session.", Toast.LENGTH_LONG).show()
+                    exitToHome()
+                    return@addSnapshotListener
+                }
+
+                if (!isHost) {
+                    syncModeAndTimer(session)
+                    btnStartFocus.isEnabled = false
+                    btnQuitSession.isEnabled = true // Guests can choose to leave independently too
+                    spinnerMode.isEnabled = false
+                }
+
+                // ALWAYS Show Host Info in Host Dashboard
+                tvHostUserName.text = session.hostName
+                tvHostPetName.text = session.hostPetName
+                val hXp = (session.hostPetXP % 1000).toInt()
+                tvHostExpValue.text = "$hXp / 1000 XP"
+                pbHostExpBar.max = 1000
+                pbHostExpBar.progress = hXp
+                tvHostLevelLabel.text = "Level ${session.hostPetLevel}: ${getStage(session.hostPetLevel)}"
+                hostPetImg.setImageResource(getPetResource(session.hostPetType, session.hostPetLevel))
+
+                // ALWAYS Show Partner Info in Partner Dashboard
+                if (session.partnerId != null) {
+                    partnerDashboard.visibility = View.VISIBLE
+                    tvPartnerUserName.text = session.partnerName
+                    tvPartnerPetName.text = session.partnerPetName
+                    val pXp = ((session.partnerPetXP ?: 0) % 1000).toInt()
+                    val pLvl = session.partnerPetLevel ?: 1
+                    tvPartnerExpValue.text = "$pXp / 1000 XP"
+                    pbPartnerExpBar.max = 1000
+                    pbPartnerExpBar.progress = pXp
+                    tvPartnerLevelLabel.text = "Level $pLvl: ${getStage(pLvl)}"
+                    partnerPetImg.setImageResource(getPetResource(session.partnerPetType ?: "Default", pLvl))
+                } else {
+                    partnerDashboard.visibility = View.GONE
+                }
+            }
+    }
+
+    private fun getStage(level: Int) = when {
+        level < 6 -> "Egg"
+        level < 16 -> "Young"
+        else -> "Adult"
+    }
+
+    private fun syncModeAndTimer(session: Session) {
+        val modes = resources.getStringArray(R.array.pomodoro_modes)
+        val index = modes.indexOf(session.selectedMode)
+        if (index != -1 && spinnerMode.selectedItemPosition != index) {
+            spinnerMode.setSelection(index)
+        }
+        
+        if (session.timerRunning && !isTimerRunning) {
+            startTimer()
+        } else if (!session.timerRunning && isTimerRunning) {
+            // Force finish if close to zero, otherwise pause
+            if (timeLeftInMillis < 5000) {
+                timer?.onFinish()
+                timer?.cancel()
+            } else {
+                pauseTimer()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sessionListener?.remove()
     }
 }
