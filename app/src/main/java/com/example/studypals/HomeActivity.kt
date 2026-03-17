@@ -39,7 +39,10 @@ class HomeActivity : AppCompatActivity() {
         btnTodo.setOnClickListener { startActivity(Intent(this, TodoActivity::class.java)) }
         btnCalendar.setOnClickListener { startActivity(Intent(this, CalendarActivity::class.java)) }
         btnStartStudy.setOnClickListener { startActivity(Intent(this, StudyModeActivity::class.java)) }
-        btnChat.setOnClickListener { startActivity(Intent(this, ChatActivity::class.java)) }
+        
+        // Pointing to UserListActivity (Inbox) for better flow
+        btnChat.setOnClickListener { startActivity(Intent(this, UserListActivity::class.java)) }
+        
         btnProfile.setOnClickListener { startActivity(Intent(this, ProfileActivity::class.java)) }
     }
 

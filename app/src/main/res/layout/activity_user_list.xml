@@ -9,7 +9,7 @@
     <View
         android:id="@+id/headerBg"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="180dp"
         android:background="@drawable/login_background"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -17,7 +17,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Find StudyPals"
+        android:text="Add StudyPal"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -26,6 +26,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/searchArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <EditText
+            android:id="@+id/etSearchEmail"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:hint="Search by email..."
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="16dp"
+            android:textSize="14sp"
+            app:backgroundTint="#FFFFFF" />
+
+        <ImageButton
+            android:id="@+id/btnSearch"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/rounded_button"
+            android:src="@android:drawable/ic_menu_search"
+            app:backgroundTint="#18004c"
+            app:tint="#FFFFFF" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvUserList"
         android:layout_width="match_parent"
@@ -33,9 +66,35 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/content_card"
         android:paddingTop="16dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@id/headerBg"
         tools:listitem="@layout/item_user_admin" />
+
+    <LinearLayout
+        android:id="@+id/llNoUser"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerBg">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="#DDDDDD" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Enter a friend's email to start a chat"
+            android:textColor="#BBBBBB"
+            android:textAlignment="center"/>
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/btnBack"

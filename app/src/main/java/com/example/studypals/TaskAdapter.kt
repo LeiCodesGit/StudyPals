@@ -1,5 +1,6 @@
 package com.example.studypals
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,13 +29,29 @@ class TaskAdapter(private var tasks: List<Task>) : RecyclerView.Adapter<TaskAdap
         holder.tvTaskTime.text = "${task.date} at ${task.time}"
         holder.tvTaskDesc.text = task.description
         
-        // Remove listener before setting state to avoid trigger on recycle
+        // Remove listener before setting state to avoid recycle triggers
         holder.cbDone.setOnCheckedChangeListener(null)
         holder.cbDone.isChecked = task.completed
 
+        // Apply strikethrough if task is completed
+        updateTaskStyle(holder, task.completed)
+
         holder.cbDone.setOnCheckedChangeListener { _, isChecked ->
+            updateTaskStyle(holder, isChecked)
             FirebaseFirestore.getInstance().collection("tasks").document(task.id)
                 .update("completed", isChecked)
+        }
+    }
+
+    private fun updateTaskStyle(holder: TaskViewHolder, isCompleted: Boolean) {
+        if (isCompleted) {
+            holder.tvTaskTitle.paintFlags = holder.tvTaskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.tvTaskTitle.alpha = 0.6f
+            holder.tvTaskDesc.alpha = 0.6f
+        } else {
+            holder.tvTaskTitle.paintFlags = holder.tvTaskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            holder.tvTaskTitle.alpha = 1.0f
+            holder.tvTaskDesc.alpha = 1.0f
         }
     }
 

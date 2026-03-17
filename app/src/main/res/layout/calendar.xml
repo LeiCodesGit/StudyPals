@@ -13,17 +13,6 @@
         android:src="@drawable/login_background"
         android:scaleType="centerCrop" />
 
-    <ImageView
-        android:id="@+id/appLogo"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/studypals_logo"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/tvMonthYear"
         android:layout_width="wrap_content"
@@ -35,8 +24,8 @@
         android:letterSpacing="0.1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appLogo"
-        android:layout_marginTop="20dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="60dp" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -70,8 +59,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCalendarGrid"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 tools:listitem="@layout/item_calendar_day" />
 
@@ -79,36 +67,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#EEEEEE"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="10dp" />
 
             <TextView
                 android:id="@+id/tvSelectedDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1 SUN"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/dark_grey"/>
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_add_mood"
-                    app:tint="#DDDDDD" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No tasks for this day"
-                    android:textColor="#BBBBBB"
-                    android:layout_marginTop="10dp"/>
-            </LinearLayout>
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDayTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:clipToPadding="false"
+                    android:paddingBottom="80dp"
+                    tools:listitem="@layout/item_task" />
+
+                <LinearLayout
+                    android:id="@+id/llNoTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No tasks for this day"
+                        android:textColor="#BBBBBB"
+                        android:layout_marginTop="10dp"/>
+                </LinearLayout>
+            </FrameLayout>
 
         </LinearLayout>
     </FrameLayout>

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 
 class ChatActivity : AppCompatActivity() {
 
@@ -39,21 +40,19 @@ class ChatActivity : AppCompatActivity() {
         tvChatTitle = findViewById(R.id.tvChatTitle)
         val btnAddFriend = findViewById<ImageButton>(R.id.btnAddFriend)
 
-        // Get extras for private chat
         receiverId = intent.getStringExtra("receiverId")
         val receiverName = intent.getStringExtra("receiverName")
 
         if (receiverId != null && receiverName != null) {
             tvChatTitle.text = receiverName
             chatId = generateChatId(auth.currentUser?.uid ?: "", receiverId!!)
-            btnAddFriend.visibility = android.view.View.GONE // Hide add friend when already in private chat
+            btnAddFriend.visibility = android.view.View.GONE
         } else {
             tvChatTitle.text = "Global Chat"
             chatId = "global"
             btnAddFriend.visibility = android.view.View.VISIBLE
         }
 
-        // Setup RecyclerView
         chatAdapter = ChatAdapter(emptyList())
         val layoutManager = LinearLayoutManager(this)
         layoutManager.stackFromEnd = true
@@ -108,8 +107,32 @@ class ChatActivity : AppCompatActivity() {
         }
 
         ref.add(message)
+            .addOnSuccessListener {
+                if (chatId != "global" && receiverId != null) {
+                    updateFriendshipMetadata(text)
+                }
+            }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateFriendshipMetadata(lastMsg: String) {
+        val currentUserId = auth.currentUser?.uid ?: return
+        val rId = receiverId ?: return
+
+        val friendshipId = generateChatId(currentUserId, rId)
+
+        val friendshipData = hashMapOf(
+            "participants" to listOf(currentUserId, rId),
+            "lastMessage" to lastMsg,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        db.collection("friendships").document(friendshipId)
+            .set(friendshipData, SetOptions.merge())
+            .addOnFailureListener { e ->
+                android.util.Log.e("ChatActivity", "Failed to update inbox metadata: ${e.message}")
             }
     }
 
