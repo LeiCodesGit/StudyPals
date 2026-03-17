@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
@@ -10,7 +11,16 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="1"
-        android:background="@drawable/calendar_day_selector"
         android:textColor="@color/dark_grey"
         android:textSize="16sp" />
+
+    <View
+        android:id="@+id/taskIndicator"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/circle_bg"
+        android:backgroundTint="#18004c"
+        android:visibility="gone" />
 </FrameLayout>
