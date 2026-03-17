@@ -9,7 +9,7 @@
     <View
         android:id="@+id/studyHeader"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="320dp"
         android:background="@drawable/login_background"
         android:backgroundTint="#4D000000"
         android:backgroundTintMode="src_over"
@@ -30,89 +30,181 @@
         android:id="@+id/tvStudyTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="40dp"
         android:letterSpacing="0.15"
         android:text="FOCUS MODE"
         android:textColor="#FFFFFF"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/petDashboard"
+        android:id="@+id/petContainerWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/tvStudyTitle">
 
-        <FrameLayout
-            android:id="@+id/petContainer"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/circle_bg"
-            android:padding="15dp">
-
-            <ImageView
-                android:id="@+id/studyPet"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/egg_golden" />
-        </FrameLayout>
-
+        <!-- Host Dashboard -->
         <LinearLayout
+            android:id="@+id/hostDashboard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:orientation="vertical">
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_button_grey"
+            android:backgroundTint="#4DFFFFFF"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvPetName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pet Name"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/circle_bg"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/studyPet"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/egg_golden" />
+            </FrameLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp">
-
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
                 <TextView
-                    android:id="@+id/tvLevelLabel"
+                    android:id="@+id/tvHostUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Level 1: Egg"
+                    android:text="Host"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp" />
-
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
                 <TextView
-                    android:id="@+id/tvExpValue"
+                    android:id="@+id/tvPetName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="420 / 1000 XP"
-                    android:textColor="#FFFFFF"
+                    android:text="Pet Name"
+                    android:textColor="#E1F5FE"
                     android:textSize="12sp" />
-            </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp">
+                    <TextView
+                        android:id="@+id/tvLevelLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Level 1"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+                    <TextView
+                        android:id="@+id/tvExpValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="0/1000 XP"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+                </RelativeLayout>
+                <ProgressBar
+                    android:id="@+id/pbExpBar"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="2dp"
+                    android:max="1000"
+                    android:progress="0"
+                    android:progressTint="#FFD700" />
+            </LinearLayout>
+        </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/pbExpBar"
-                style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        <!-- Partner Dashboard -->
+        <LinearLayout
+            android:id="@+id/partnerDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_button_grey"
+            android:backgroundTint="#4DFFFFFF"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/circle_bg"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/partnerPet"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/egg_golden" />
+            </FrameLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="12dp"
-                android:layout_marginTop="8dp"
-                android:progress="42"
-                android:progressBackgroundTint="#FFFFFF"
-                android:progressTint="#D1C4E9" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvPartnerUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Partner"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tvPartnerPetName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pet Name"
+                    android:textColor="#E1F5FE"
+                    android:textSize="12sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp">
+                    <TextView
+                        android:id="@+id/tvPartnerLevelLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Level 1"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+                    <TextView
+                        android:id="@+id/tvPartnerExpValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="0/1000 XP"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+                </RelativeLayout>
+                <ProgressBar
+                    android:id="@+id/pbPartnerExpBar"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="2dp"
+                    android:max="1000"
+                    android:progress="0"
+                    android:progressTint="#81C784" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -120,10 +212,10 @@
         android:id="@+id/timerCard"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/content_card"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/petDashboard">
+        app:layout_constraintTop_toBottomOf="@id/petContainerWrapper">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -135,8 +227,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:letterSpacing="0.1"
+                android:layout_marginTop="4dp"
                 android:text="Select focus mode"
                 android:textColor="#555555"
                 android:textSize="16sp"
@@ -149,26 +240,23 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_spinner_bg"
                 android:paddingStart="16dp"
-                android:paddingEnd="44dp"
-                android:spinnerMode="dropdown"
-                tools:listitem="@layout/spinner_item" />
+                android:paddingEnd="44dp" />
 
             <TextView
                 android:id="@+id/tvCountdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="0dp"
                 android:fontFamily="sans-serif-black"
-                android:includeFontPadding="false"
                 android:text="25:00"
                 android:textColor="#8E24AA"
-                android:textSize="80sp"
+                android:textSize="70sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="0dp"
                 android:text="Stay focused to grow your Pal!"
                 android:textColor="#18004c"
                 android:textSize="14sp"
@@ -178,16 +266,11 @@
                 android:id="@+id/btnStartFocus"
                 android:layout_width="280dp"
                 android:layout_height="65dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="20dp"
                 android:text="START FOCUS"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 app:backgroundTint="#18004c"
                 app:cornerRadius="32dp"
-                app:icon="@android:drawable/ic_media_play"
-                app:iconPadding="12dp"
-                app:iconSize="24dp" />
+                app:icon="@android:drawable/ic_media_play" />
 
             <Button
                 android:id="@+id/btnQuitSession"
@@ -197,13 +280,21 @@
                 android:layout_marginTop="12dp"
                 android:text="GIVE UP"
                 android:textColor="#FF4444"
-                android:textSize="16sp"
-                android:textStyle="bold"
                 app:cornerRadius="32dp"
-                app:strokeColor="#FF4444"
-                app:strokeWidth="2dp" />
-
+                app:strokeColor="#FF4444" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabMultiplayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/group"
+        app:backgroundTint="#18004c"
+        app:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
