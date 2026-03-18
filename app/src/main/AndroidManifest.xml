@@ -33,6 +33,7 @@
         <activity android:name=".UserListActivity" android:exported="false"/>
         <activity android:name=".ProfileActivity" android:exported="false"/>
         <activity android:name=".AdminActivity" android:exported="false" />
+        <activity android:name=".AboutUsActivity" android:exported="false" />
 
     </application>
 

@@ -63,14 +63,13 @@ class UserAdminAdapter(private var userList: MutableList<User>) :
         dialog.setContentView(R.layout.dialog_edit)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // 1. Initialize ALL views based on User attributes
+        // 1. Initialize views based on User attributes (Removed etXP)
         val etUsername = dialog.findViewById<EditText>(R.id.etEditUsername)
         val etFirstName = dialog.findViewById<EditText>(R.id.etEditFirstName)
         val etLastName = dialog.findViewById<EditText>(R.id.etEditLastName)
         val etAge = dialog.findViewById<EditText>(R.id.etEditAge)
         val cbAdmin = dialog.findViewById<CheckBox>(R.id.cbAdminStatus)
         val etPetName = dialog.findViewById<EditText>(R.id.etEditPetName)
-        val etXP = dialog.findViewById<EditText>(R.id.etEditXP)
         val btnSave = dialog.findViewById<Button>(R.id.btnUpdateUser)
 
         // 2. Populate UI with User data
@@ -80,22 +79,15 @@ class UserAdminAdapter(private var userList: MutableList<User>) :
         etAge.setText(user.age.toString())
         cbAdmin.isChecked = user.admin
         etPetName.setText(user.petName)
-        etXP.setText(user.currentXP.toString())
 
         btnSave.setOnClickListener {
-            val newXP = etXP.text.toString().toLongOrNull() ?: user.currentXP
-            // Auto-calculate level: Level 1 for 0-999, Level 2 for 1000+, etc.
-            val newLevel = (newXP / 1000).toInt() + 1
-
             val updates = mapOf(
                 "username" to etUsername.text.toString(),
                 "firstName" to etFirstName.text.toString(),
                 "lastName" to etLastName.text.toString(),
                 "age" to (etAge.text.toString().toIntOrNull() ?: user.age),
                 "admin" to cbAdmin.isChecked,
-                "petName" to etPetName.text.toString(),
-                "currentXP" to newXP,
-                "level" to newLevel
+                "petName" to etPetName.text.toString()
             )
 
             db.collection("users").document(user.uid)
@@ -108,13 +100,11 @@ class UserAdminAdapter(private var userList: MutableList<User>) :
                         lastName = etLastName.text.toString(),
                         age = (etAge.text.toString().toIntOrNull() ?: user.age),
                         admin = cbAdmin.isChecked,
-                        petName = etPetName.text.toString(),
-                        currentXP = newXP,
-                        level = newLevel
+                        petName = etPetName.text.toString()
                     )
                     notifyItemChanged(position)
                     dialog.dismiss()
-                    Toast.makeText(context, "All User & Pet stats synced!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "User details updated!", Toast.LENGTH_SHORT).show()
                 }
         }
 
