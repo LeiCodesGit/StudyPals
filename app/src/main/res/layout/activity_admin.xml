@@ -17,7 +17,7 @@
         android:id="@+id/tvAdminTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/user_management"
+        android:text="User Management"
         android:textColor="#FFFFFF"
         android:textSize="26sp"
         android:textStyle="bold"
@@ -25,6 +25,18 @@
         android:layout_marginTop="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnLogoutAdmin"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_lock_power_off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#FFFFFF" />
 
     <LinearLayout
         android:id="@+id/tableLabels"
@@ -40,14 +52,14 @@
             android:layout_width="0dp" 
             android:layout_height="wrap_content" 
             android:layout_weight="1" 
-            android:text="@string/user_details" 
+            android:text="User Details" 
             android:textColor="#E0E0E0" 
             android:textSize="12sp" 
             android:textStyle="bold" />
         <TextView 
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content" 
-            android:text="@string/actions" 
+            android:text="Actions" 
             android:textColor="#E0E0E0" 
             android:textSize="12sp" 
             android:textStyle="bold" />

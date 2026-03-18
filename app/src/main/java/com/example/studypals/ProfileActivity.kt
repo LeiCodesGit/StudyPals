@@ -26,7 +26,6 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.profile)
 
         val btnLogout = findViewById<Button>(R.id.btnLogout)
-        val appLogo = findViewById<ImageView>(R.id.appLogo)
         val tvUsername = findViewById<TextView>(R.id.tvUsername)
         val tvEmail = findViewById<TextView>(R.id.tvEmail)
         val btnAdmin = findViewById<Button>(R.id.btnSettings)
@@ -58,11 +57,6 @@ class ProfileActivity : AppCompatActivity() {
 
         btnAboutUs.setOnClickListener {
             startActivity(Intent(this, AboutUsActivity::class.java))
-        }
-
-        appLogo.setOnClickListener {
-            startActivity(Intent(this, HomeActivity::class.java))
-            finish()
         }
 
         btnLogout.setOnClickListener {

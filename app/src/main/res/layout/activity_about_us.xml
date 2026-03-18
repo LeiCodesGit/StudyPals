@@ -90,6 +90,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:text="Developers"
+                android:textColor="#18004c"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="• Leah Rouse L. Cruzo\n• Sophia Angel C. Managbanag"
+                android:textColor="#424242"
+                android:textSize="16sp"
+                android:lineSpacingExtra="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:text="Key Features"
                 android:textColor="#18004c"
                 android:textSize="18sp"
@@ -99,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="• Focus Timer &amp; Study Mode\n• Virtual Pet Evolution\n• Task Management &amp; Calendar\n• Global &amp; Private Chat"
+                android:text="• Focus Timer &amp; Study Mode\n• Virtual Pet Evolution\n• Task Management &amp; Calendar\n• Chat"
                 android:textColor="#424242"
                 android:textSize="16sp"
                 android:lineSpacingExtra="4dp" />
