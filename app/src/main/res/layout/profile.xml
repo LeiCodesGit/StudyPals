@@ -135,7 +135,7 @@
                 android:layout_width="280dp"
                 android:layout_height="60dp"
                 android:layout_marginBottom="16dp"
-                android:text="Notifications"
+                android:text="About us"
                 android:textAllCaps="false"
                 android:textColor="#FAFAFA"
                 android:textSize="16sp"
@@ -145,7 +145,6 @@
                 app:backgroundTint="#18004c"
                 android:background="@drawable/rounded_button"
                 app:cornerRadius="30dp"
-                app:icon="@android:drawable/ic_lock_idle_alarm"
                 app:iconPadding="16dp"
                 app:iconTint="#FAFAFA" />
 
@@ -170,16 +169,5 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <ImageView
-        android:id="@+id/appLogo"
-        android:layout_width="51dp"
-        android:layout_height="37dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/studypals_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
