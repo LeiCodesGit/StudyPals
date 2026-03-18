@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">StudyPals</string>
+    <string name="user_management">User Management</string>
+    <string name="user_details">User Details</string>
+    <string name="actions">Actions</string>
+    
     <array name="pomodoro_modes">
-        <item>• 5 seconds</item>
-        <item>• 25 minutes</item>
-        <item>• 50 minutes</item>
-        <item>• 15 minutes</item>
+        <item>Traditional • 25m</item>
+        <item>Deep Work • 50m</item>
+        <item>DeskTime • 52m</item>
+        <item>Mini • 15m</item>
+        <item>Ultradian • 90m</item>
+        <item>For Testing Only • 5s</item>
+        <item>For Testing Only • 10s</item>
     </array>
 </resources>

@@ -96,6 +96,7 @@
 
                     <!-- Slot 1 -->
                     <LinearLayout
+                        android:id="@+id/dateContainer1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -122,6 +123,7 @@
 
                     <!-- Slot 2 -->
                     <LinearLayout
+                        android:id="@+id/dateContainer2"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -146,46 +148,36 @@
 
                     <View android:layout_width="1dp" android:layout_height="40dp" android:background="#EEEEEE" />
 
-                    <!-- Slot 3 (Selected/Today) -->
-                    <FrameLayout
+                    <!-- Slot 3 -->
+                    <LinearLayout
+                        android:id="@+id/dateContainer3"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:padding="8dp">
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:cardBackgroundColor="#18004c"
-                            app:cardCornerRadius="12dp"
-                            app:cardElevation="0dp">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:orientation="vertical">
-                                <TextView
-                                    android:id="@+id/tvDate3"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="14"
-                                    android:textColor="@android:color/white"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold" />
-                                <TextView
-                                    android:id="@+id/tvDay3"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Mon"
-                                    android:textColor="@android:color/white"
-                                    android:textSize="14sp" />
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-                    </FrameLayout>
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvDate3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="14"
+                            android:textColor="#333333"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvDay3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mon"
+                            android:textColor="#333333"
+                            android:textSize="14sp" />
+                    </LinearLayout>
 
                     <View android:layout_width="1dp" android:layout_height="40dp" android:background="#EEEEEE" />
 
                     <!-- Slot 4 -->
                     <LinearLayout
+                        android:id="@+id/dateContainer4"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -212,6 +204,7 @@
 
                     <!-- Slot 5 -->
                     <LinearLayout
+                        android:id="@+id/dateContainer5"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"

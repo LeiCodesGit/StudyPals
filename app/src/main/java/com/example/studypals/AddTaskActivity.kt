@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTaskActivity : AppCompatActivity() {
@@ -27,6 +28,7 @@ class AddTaskActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Ensure we are using add_task.xml which has the updated UI
         setContentView(R.layout.add_task)
 
         etTaskTitle = findViewById(R.id.etTaskTitle)
@@ -35,6 +37,16 @@ class AddTaskActivity : AppCompatActivity() {
         etTaskDesc = findViewById(R.id.etTaskDesc)
         btnCreateTask = findViewById(R.id.btnCreateTask)
         btnCloseTask = findViewById(R.id.btnCloseTask)
+
+        // Handle pre-filled date from CalendarActivity
+        val passedDate = intent.getStringExtra("selectedDate")
+        if (passedDate != null) {
+            etTaskDate.setText(passedDate)
+        } else {
+            // Default to today in MM-DD-YYYY
+            val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
+            etTaskDate.setText(sdf.format(Date()))
+        }
 
         etTaskDate.setOnClickListener { showDatePicker() }
         etTaskTime.setOnClickListener { showTimePicker() }
@@ -48,16 +60,63 @@ class AddTaskActivity : AppCompatActivity() {
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
-        DatePickerDialog(this, { _, year, month, day ->
-            etTaskDate.setText(String.format("%02d.%02d.%d", day, month + 1, year))
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        val datePickerDialog = DatePickerDialog(this, { _, year, month, day ->
+            val selectedDate = Calendar.getInstance()
+            selectedDate.set(year, month, day, 0, 0, 0)
+            selectedDate.set(Calendar.MILLISECOND, 0)
+            
+            val today = Calendar.getInstance()
+            today.set(Calendar.HOUR_OF_DAY, 0)
+            today.set(Calendar.MINUTE, 0)
+            today.set(Calendar.SECOND, 0)
+            today.set(Calendar.MILLISECOND, 0)
+
+            if (selectedDate.before(today)) {
+                Toast.makeText(this, "Cannot select a past date", Toast.LENGTH_SHORT).show()
+            } else {
+                etTaskDate.setText(String.format("%02d-%02d-%d", month + 1, day, year))
+                // Clear time if date changed to today to force re-validation
+                etTaskTime.text.clear()
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        
+        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+        datePickerDialog.show()
     }
 
     private fun showTimePicker() {
         val calendar = Calendar.getInstance()
         TimePickerDialog(this, { _, hour, minute ->
-            etTaskTime.setText(String.format("%02d:%02d", hour, minute))
-        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
+            val selectedTime = Calendar.getInstance()
+            val dateStr = etTaskDate.text.toString()
+            val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
+            
+            try {
+                val date = sdf.parse(dateStr)
+                if (date != null) {
+                    selectedTime.time = date
+                }
+            } catch (e: Exception) {
+                // fallback to now
+            }
+            
+            selectedTime.set(Calendar.HOUR_OF_DAY, hour)
+            selectedTime.set(Calendar.MINUTE, minute)
+            selectedTime.set(Calendar.SECOND, 0)
+            selectedTime.set(Calendar.MILLISECOND, 0)
+
+            // If selected date is today, prevent past time
+            val today = Calendar.getInstance()
+            if (dateStr == sdf.format(today.time)) {
+                if (selectedTime.before(today)) {
+                    Toast.makeText(this, "Cannot select a past time for today", Toast.LENGTH_SHORT).show()
+                    return@TimePickerDialog
+                }
+            }
+
+            val sdfTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            etTaskTime.setText(sdfTime.format(selectedTime.time))
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show()
     }
 
     private fun saveTaskToFirestore() {
@@ -73,7 +132,7 @@ class AddTaskActivity : AppCompatActivity() {
         }
 
         if (user == null) {
-            Toast.makeText(this, "User not authenticated. Please log in again.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
             return
         }
 
@@ -87,7 +146,7 @@ class AddTaskActivity : AppCompatActivity() {
             "timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
         )
 
-        btnCreateTask.isEnabled = false // Prevent double-clicks
+        btnCreateTask.isEnabled = false
 
         db.collection("tasks")
             .add(task)
@@ -97,8 +156,6 @@ class AddTaskActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 btnCreateTask.isEnabled = true
-                Log.e("AddTaskActivity", "Error adding document", e)
-                // Showing the specific error helps the user identify permission issues
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }

@@ -223,16 +223,17 @@ class StudyModeActivity : AppCompatActivity() {
         val selectedMode = spinnerMode.selectedItem.toString()
         val minutesEarned = selectedMode.substringAfter("•").trim().filter { it.isDigit() }.toLongOrNull() ?: 0
         
-        // Bonus for testing (5s mode adds 1000 XP)
-        val xpToGain = if (selectedMode.contains("5 seconds")) 1000L else (minutesEarned * 10)
+        // xpToGain logic
+        val xpToGain = when {
+            selectedMode.contains("5") && selectedMode.contains("second") -> 1000L
+            selectedMode.contains("10") && selectedMode.contains("second") -> 10L
+            else -> minutesEarned * 10
+        }
 
         LevelManager.addExp(this, xpToGain) {
             updateLocalPetVisual()
+            showSuccessDialog(xpToGain)
             
-            // Success Toast for simple feedback
-            Toast.makeText(this, "Session Complete! +$xpToGain XP", Toast.LENGTH_SHORT).show()
-            
-            // Sync progress to session
             userRepository.getUserData { user, _ ->
                 user?.let { u ->
                     if (currentSessionId != null) {
@@ -246,8 +247,27 @@ class StudyModeActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun showSuccessDialog(xpGained: Long) {
+        if (isSuccessDialogShowing) return
+        isSuccessDialogShowing = true
+        
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("🎉 Congratulations!")
+        builder.setMessage("You finished your focus session and earned +$xpGained XP for your Pal!")
+        builder.setPositiveButton("Study Again") { d, _ -> 
+            d.dismiss()
+            isSuccessDialogShowing = false
             resetTimer()
         }
+        builder.setNegativeButton("Go Home") { _, _ ->
+            isSuccessDialogShowing = false
+            exitToHome()
+        }
+        builder.setCancelable(false)
+        builder.show()
     }
 
     private fun updateLocalPetVisual() {

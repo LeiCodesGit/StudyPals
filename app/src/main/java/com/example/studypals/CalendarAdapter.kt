@@ -31,7 +31,7 @@ class CalendarAdapter(
         val day = days[position]
         holder.dayText.text = day
 
-        // 1. Reset defaults for recycling
+        // Reset defaults
         holder.dayText.setBackgroundResource(0)
         holder.dayText.setTextColor(Color.parseColor("#333333"))
         holder.taskIndicator.visibility = View.GONE
@@ -40,27 +40,27 @@ class CalendarAdapter(
 
         val dayNumber = day.toIntOrNull() ?: -1
 
-        // 2. Sunday Color
+        // Sunday Color
         if (position % 7 == 0) {
             holder.dayText.setTextColor(Color.parseColor("#FF5252"))
         }
 
-        // 3. Today highlight (Priority 1)
-        if (dayNumber == today) {
+        // Selected highlight (Priority 1) - Circle
+        if (position == selectedPosition) {
+            holder.dayText.setBackgroundResource(R.drawable.selected_day_highlight)
+            holder.dayText.setTextColor(Color.BLACK)
+        }
+        // Today highlight (Priority 2) - Different Circle
+        else if (dayNumber == today) {
             holder.dayText.setBackgroundResource(R.drawable.today_highlight)
             holder.dayText.setTextColor(Color.WHITE)
         }
-        // 4. Selected highlight (Priority 2)
-        else if (position == selectedPosition) {
-            // You might want to create this drawable or use a standard one
-            holder.dayText.setBackgroundColor(Color.LTGRAY) 
-        }
 
-        // 5. Task Indicator logic
+        // Task Indicator
         val hasTasks = tasks.any { task ->
             try {
-                // Matches format "dd.MM.yyyy" from AddTaskActivity
-                val taskDay = task.date.split(".")[0].toInt()
+                // Matches "MM-dd-yyyy"
+                val taskDay = task.date.split("-")[1].toInt()
                 taskDay == dayNumber
             } catch (e: Exception) {
                 false
@@ -70,7 +70,6 @@ class CalendarAdapter(
             holder.taskIndicator.visibility = View.VISIBLE
         }
 
-        // 6. Click Listener
         holder.itemView.setOnClickListener {
             if (day.isNotEmpty()) {
                 val oldPosition = selectedPosition

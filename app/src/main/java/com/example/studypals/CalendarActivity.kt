@@ -1,5 +1,6 @@
 package com.example.studypals
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -21,12 +23,14 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var tvMonthYear: TextView
     private lateinit var tvSelectedDay: TextView
     private lateinit var llNoTasks: LinearLayout
+    private lateinit var btnAdd: FloatingActionButton
     private lateinit var taskAdapter: TaskAdapter
     
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private val allTasks = mutableListOf<Task>()
     private var selectedDate: String = ""
+    private val sdfFilter = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,23 +41,28 @@ class CalendarActivity : AppCompatActivity() {
         tvMonthYear = findViewById(R.id.tvMonthYear)
         tvSelectedDay = findViewById(R.id.tvSelectedDay)
         llNoTasks = findViewById(R.id.llNoTasks)
+        btnAdd = findViewById(R.id.btnCalendarAdd)
 
         val calendar = Calendar.getInstance()
         val sdfMonth = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
         tvMonthYear.text = sdfMonth.format(calendar.time).uppercase()
 
         // Default selected date is today
-        val sdfDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        selectedDate = sdfDate.format(calendar.time)
+        selectedDate = sdfFilter.format(calendar.time)
         tvSelectedDay.text = SimpleDateFormat("d EEE", Locale.getDefault()).format(calendar.time).uppercase()
 
         setupRecyclerViews()
         setupCalendar()
         fetchTasks()
+
+        btnAdd.setOnClickListener {
+            val intent = Intent(this, AddTaskActivity::class.java)
+            intent.putExtra("selectedDate", selectedDate)
+            startActivity(intent)
+        }
     }
 
     private fun setupRecyclerViews() {
-        // Day tasks list
         taskAdapter = TaskAdapter(emptyList())
         rvDayTasks.layoutManager = LinearLayoutManager(this)
         rvDayTasks.adapter = taskAdapter
@@ -84,9 +93,7 @@ class CalendarActivity : AppCompatActivity() {
         val dayInt = day.toInt()
         calendar.set(Calendar.DAY_OF_MONTH, dayInt)
         
-        val sdfDate = SimpleDateFormat("02d.MM.yyyy", Locale.getDefault())
-        selectedDate = String.format("%02d.%02d.%d", dayInt, calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR))
-        
+        selectedDate = sdfFilter.format(calendar.time)
         tvSelectedDay.text = "${dayInt} ${SimpleDateFormat("EEE", Locale.getDefault()).format(calendar.time)}".uppercase()
         
         filterTasksForSelectedDate()
@@ -106,16 +113,14 @@ class CalendarActivity : AppCompatActivity() {
                     allTasks.add(task.copy(id = doc.id))
                 }
                 
-                // Update calendar indicators
                 (rvCalendar.adapter as? CalendarAdapter)?.updateTasks(allTasks)
-                // Update tasks for the currently selected day
                 filterTasksForSelectedDate()
             }
     }
 
     private fun filterTasksForSelectedDate() {
         val filtered = allTasks.filter { it.date == selectedDate }
-        taskAdapter.updateTasks(filtered)
+        taskAdapter.updateTasks(filtered.sortedBy { it.time })
         
         if (filtered.isEmpty()) {
             llNoTasks.visibility = View.VISIBLE

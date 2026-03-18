@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 class HomeActivity : AppCompatActivity() {
     private val userRepository = UserRepository()
 
-    // Declare UI elements at the class level so they can be accessed in onResume
     private lateinit var petImage: ImageView
     private lateinit var levelText: TextView
     private lateinit var xpText: TextView
@@ -23,7 +22,6 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.homepage)
 
-        // Initialize UI Elements
         petImage = findViewById(R.id.petImage)
         levelText = findViewById(R.id.levelText)
         xpText = findViewById(R.id.xpText)
@@ -35,18 +33,13 @@ class HomeActivity : AppCompatActivity() {
         val btnChat = findViewById<ImageButton>(R.id.btnMessage)
         val btnProfile = findViewById<ImageButton>(R.id.profileButton)
 
-        // Click Listeners stay in onCreate
         btnTodo.setOnClickListener { startActivity(Intent(this, TodoActivity::class.java)) }
         btnCalendar.setOnClickListener { startActivity(Intent(this, CalendarActivity::class.java)) }
         btnStartStudy.setOnClickListener { startActivity(Intent(this, StudyModeActivity::class.java)) }
-        
-        // Pointing to UserListActivity (Inbox) for better flow
         btnChat.setOnClickListener { startActivity(Intent(this, UserListActivity::class.java)) }
-        
         btnProfile.setOnClickListener { startActivity(Intent(this, ProfileActivity::class.java)) }
     }
 
-    // This runs every time you return to this screen (like after a swipe back)
     override fun onResume() {
         super.onResume()
         refreshUserData()
@@ -55,17 +48,18 @@ class HomeActivity : AppCompatActivity() {
     private fun refreshUserData() {
         userRepository.getUserData { user, error ->
             if (user != null) {
-                // Update Text & Progress based on level logic
-                levelText.text = "Level ${user.level}: ${user.petName}"
+                // Check for Level Up dialog first
+                LevelManager.checkAndShowLevelUp(this, user)
 
-                // Show current level progress (0-1000)
-                val currentLevelXP = user.currentXP % 1000
-                xpText.text = "$currentLevelXP / 1000 XP"
+                val threshold = LevelManager.getExpThreshold(user.level)
+                val stage = LevelManager.getStage(user.level)
+                
+                levelText.text = "Level ${user.level}: ${user.petName} ($stage)"
+                xpText.text = "${user.currentXP} / $threshold XP"
 
-                val progress = (currentLevelXP.toDouble() / 1000 * 100).toInt()
-                xpProgressBar.progress = progress
+                xpProgressBar.max = threshold.toInt()
+                xpProgressBar.progress = user.currentXP.toInt()
 
-                // Evolution Logic matches StudyMode
                 val petResId = when (user.petType) {
                     "British Shorthair" -> when {
                         user.level >= 16 -> R.drawable.adult_british
@@ -85,7 +79,7 @@ class HomeActivity : AppCompatActivity() {
                     else -> R.drawable.egg_british
                 }
                 petImage.setImageResource(petResId)
-            } else {
+            } else if (error != null) {
                 Toast.makeText(this, "Error: $error", Toast.LENGTH_SHORT).show()
             }
         }
