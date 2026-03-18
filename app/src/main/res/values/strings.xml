@@ -1,24 +1,9 @@
 <resources>
     <string name="app_name">StudyPals</string>
-
-    <string-array name="pomodoro_modes">
-        <item>Traditional • 25m</item>
-        <item>Deep Work • 50m</item>
-        <item>DeskTime • 52m</item>
-        <item>Mini • 15m</item>
-        <item>Ultradian • 90m</item>
-        <item>For Testing Only • 10s</item>
-    </string-array>
-
-    <string name="user_management">User Management</string>
-    <string name="user_details">USER DETAILS</string>
-    <string name="actions">ACTIONS</string>
-    <string name="create_task">Create Task</string>
-    <string name="title_label">Title*</string>
-    <string name="date_label">Date*</string>
-    <string name="time_label">Time*</string>
-    <string name="description_label">Description</string>
-    <string name="create_button">Create</string>
-    <string name="task_name_hint">Task name</string>
-    <string name="type_here_hint">Type here...</string>
+    <array name="pomodoro_modes">
+        <item>• 5 seconds</item>
+        <item>• 25 minutes</item>
+        <item>• 50 minutes</item>
+        <item>• 15 minutes</item>
+    </array>
 </resources>

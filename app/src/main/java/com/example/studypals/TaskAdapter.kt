@@ -29,17 +29,20 @@ class TaskAdapter(private var tasks: List<Task>) : RecyclerView.Adapter<TaskAdap
         holder.tvTaskTime.text = "${task.date} at ${task.time}"
         holder.tvTaskDesc.text = task.description
         
-        // Remove listener before setting state to avoid recycle triggers
         holder.cbDone.setOnCheckedChangeListener(null)
         holder.cbDone.isChecked = task.completed
-
-        // Apply strikethrough if task is completed
         updateTaskStyle(holder, task.completed)
 
         holder.cbDone.setOnCheckedChangeListener { _, isChecked ->
             updateTaskStyle(holder, isChecked)
             FirebaseFirestore.getInstance().collection("tasks").document(task.id)
                 .update("completed", isChecked)
+                .addOnSuccessListener {
+                    if (isChecked) {
+                        // Add 10 XP for completing a task
+                        LevelManager.addExp(holder.itemView.context, 10)
+                    }
+                }
         }
     }
 

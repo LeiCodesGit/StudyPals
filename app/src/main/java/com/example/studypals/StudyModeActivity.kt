@@ -103,15 +103,11 @@ class StudyModeActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton("Yes") { _, _ ->
                 if (isHost && currentSessionId != null) {
-                    // Update status to finished/cancelled so guests know it's over
                     FirebaseFirestore.getInstance().collection("sessions")
                         .document(currentSessionId!!)
                         .update("status", "finished")
-                        .addOnCompleteListener {
-                            exitToHome()
-                        }
+                        .addOnCompleteListener { exitToHome() }
                 } else if (!isHost && currentSessionId != null) {
-                    // Just leave the session (remove partner data)
                     FirebaseFirestore.getInstance().collection("sessions")
                         .document(currentSessionId!!)
                         .update(
@@ -122,9 +118,7 @@ class StudyModeActivity : AppCompatActivity() {
                             "partnerPetLevel", null,
                             "partnerPetXP", null,
                             "status", "waiting"
-                        ).addOnCompleteListener {
-                            exitToHome()
-                        }
+                        ).addOnCompleteListener { exitToHome() }
                 } else {
                     exitToHome()
                 }
@@ -157,7 +151,6 @@ class StudyModeActivity : AppCompatActivity() {
                 if (position >= 0 && position < modes.size) {
                     val selected = modes[position]
                     parseSelectedTime(selected)
-                    
                     if (isHost && currentSessionId != null) {
                         FirebaseFirestore.getInstance().collection("sessions")
                             .document(currentSessionId!!)
@@ -229,63 +222,55 @@ class StudyModeActivity : AppCompatActivity() {
         
         val selectedMode = spinnerMode.selectedItem.toString()
         val minutesEarned = selectedMode.substringAfter("•").trim().filter { it.isDigit() }.toLongOrNull() ?: 0
-        val xpToGain = if (selectedMode.contains("s", true)) 10L else minutesEarned * 10
+        
+        // Bonus for testing (5s mode adds 1000 XP)
+        val xpToGain = if (selectedMode.contains("5 seconds")) 1000L else (minutesEarned * 10)
 
-        userRepository.getUserData { user, _ ->
-            user?.let {
-                val newXp = it.currentXP + xpToGain
-                val newTotalMinutes = it.totalFocusMinutes + minutesEarned
-                val newLevel = (newXp / 1000).toInt() + 1
-
-                val updatedUser = it.copy(
-                    currentXP = newXp,
-                    level = if (newLevel > it.level) newLevel else it.level,
-                    totalFocusMinutes = newTotalMinutes
-                )
-
-                FirebaseFirestore.getInstance().collection("users")
-                    .document(it.uid).set(updatedUser)
-                    .addOnSuccessListener {
-                        updateLocalPetVisual()
-                        showSuccessDialog(xpToGain)
-                        
-                        if (currentSessionId != null) {
-                            val updateMap = if (isHost) {
-                                mapOf("hostPetXP" to newXp, "hostPetLevel" to updatedUser.level)
-                            } else {
-                                mapOf("partnerPetXP" to newXp, "partnerPetLevel" to updatedUser.level)
-                            }
-                            FirebaseFirestore.getInstance().collection("sessions")
-                                .document(currentSessionId!!).update(updateMap)
+        LevelManager.addExp(this, xpToGain) {
+            updateLocalPetVisual()
+            
+            // Success Toast for simple feedback
+            Toast.makeText(this, "Session Complete! +$xpToGain XP", Toast.LENGTH_SHORT).show()
+            
+            // Sync progress to session
+            userRepository.getUserData { user, _ ->
+                user?.let { u ->
+                    if (currentSessionId != null) {
+                        val updateMap = if (isHost) {
+                            mapOf("hostPetXP" to u.currentXP, "hostPetLevel" to u.level)
+                        } else {
+                            mapOf("partnerPetXP" to u.currentXP, "partnerPetLevel" to u.level)
                         }
+                        FirebaseFirestore.getInstance().collection("sessions")
+                            .document(currentSessionId!!).update(updateMap)
                     }
+                }
             }
+            resetTimer()
         }
     }
 
     private fun updateLocalPetVisual() {
         userRepository.getUserData { user, _ ->
             user?.let {
+                val threshold = LevelManager.getExpThreshold(it.level)
+                val stage = LevelManager.getStage(it.level)
+                
                 if (currentSessionId == null || isHost) {
                     tvHostUserName.text = it.username
                     tvHostPetName.text = it.petName
-                    val progress = (it.currentXP % 1000).toInt()
-                    tvHostExpValue.text = "$progress / 1000 XP"
-                    pbHostExpBar.max = 1000
-                    pbHostExpBar.progress = progress
-
-                    val stage = getStage(it.level)
+                    tvHostExpValue.text = "${it.currentXP} / $threshold XP"
+                    pbHostExpBar.max = threshold.toInt()
+                    pbHostExpBar.progress = it.currentXP.toInt()
                     tvHostLevelLabel.text = "Level ${it.level}: $stage"
                     hostPetImg.setImageResource(getPetResource(it.petType, it.level))
                 } else {
-                    // If guest, local pet is the Partner Dashboard
                     tvPartnerUserName.text = it.username
                     tvPartnerPetName.text = it.petName
-                    val progress = (it.currentXP % 1000).toInt()
-                    tvPartnerExpValue.text = "$progress / 1000 XP"
-                    pbPartnerExpBar.max = 1000
-                    pbPartnerExpBar.progress = progress
-                    tvPartnerLevelLabel.text = "Level ${it.level}: ${getStage(it.level)}"
+                    tvPartnerExpValue.text = "${it.currentXP} / $threshold XP"
+                    pbPartnerExpBar.max = threshold.toInt()
+                    pbPartnerExpBar.progress = it.currentXP.toInt()
+                    tvPartnerLevelLabel.text = "Level ${it.level}: $stage"
                     partnerPetImg.setImageResource(getPetResource(it.petType, it.level))
                 }
             }
@@ -311,22 +296,6 @@ class StudyModeActivity : AppCompatActivity() {
             }
             else -> R.drawable.egg_british
         }
-    }
-
-    private fun showSuccessDialog(xpGained: Long) {
-        if (isSuccessDialogShowing) return
-        isSuccessDialogShowing = true
-        
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("🎉 Congratulations!")
-        builder.setMessage("You earned +$xpGained XP for your Pal!")
-        builder.setPositiveButton("OK") { d, _ -> 
-            d.dismiss()
-            isSuccessDialogShowing = false
-            resetTimer()
-        }
-        builder.setCancelable(false)
-        builder.show()
     }
 
     private fun showMultiplayerOptions() {
@@ -416,7 +385,6 @@ class StudyModeActivity : AppCompatActivity() {
                 if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
                 val session = snapshot.toObject(Session::class.java) ?: return@addSnapshotListener
 
-                // If session ended by host
                 if (session.status == "finished") {
                     Toast.makeText(this, "The host has ended the session.", Toast.LENGTH_LONG).show()
                     exitToHome()
@@ -426,42 +394,33 @@ class StudyModeActivity : AppCompatActivity() {
                 if (!isHost) {
                     syncModeAndTimer(session)
                     btnStartFocus.isEnabled = false
-                    btnQuitSession.isEnabled = true // Guests can choose to leave independently too
+                    btnQuitSession.isEnabled = true
                     spinnerMode.isEnabled = false
                 }
 
-                // ALWAYS Show Host Info in Host Dashboard
+                val thresholdHost = LevelManager.getExpThreshold(session.hostPetLevel)
                 tvHostUserName.text = session.hostName
                 tvHostPetName.text = session.hostPetName
-                val hXp = (session.hostPetXP % 1000).toInt()
-                tvHostExpValue.text = "$hXp / 1000 XP"
-                pbHostExpBar.max = 1000
-                pbHostExpBar.progress = hXp
-                tvHostLevelLabel.text = "Level ${session.hostPetLevel}: ${getStage(session.hostPetLevel)}"
+                tvHostExpValue.text = "${session.hostPetXP} / $thresholdHost XP"
+                pbHostExpBar.max = thresholdHost.toInt()
+                pbHostExpBar.progress = session.hostPetXP.toInt()
+                tvHostLevelLabel.text = "Level ${session.hostPetLevel}: ${LevelManager.getStage(session.hostPetLevel)}"
                 hostPetImg.setImageResource(getPetResource(session.hostPetType, session.hostPetLevel))
 
-                // ALWAYS Show Partner Info in Partner Dashboard
                 if (session.partnerId != null) {
                     partnerDashboard.visibility = View.VISIBLE
+                    val thresholdPartner = LevelManager.getExpThreshold(session.partnerPetLevel ?: 1)
                     tvPartnerUserName.text = session.partnerName
                     tvPartnerPetName.text = session.partnerPetName
-                    val pXp = ((session.partnerPetXP ?: 0) % 1000).toInt()
-                    val pLvl = session.partnerPetLevel ?: 1
-                    tvPartnerExpValue.text = "$pXp / 1000 XP"
-                    pbPartnerExpBar.max = 1000
-                    pbPartnerExpBar.progress = pXp
-                    tvPartnerLevelLabel.text = "Level $pLvl: ${getStage(pLvl)}"
-                    partnerPetImg.setImageResource(getPetResource(session.partnerPetType ?: "Default", pLvl))
+                    tvPartnerExpValue.text = "${session.partnerPetXP} / $thresholdPartner XP"
+                    pbPartnerExpBar.max = thresholdPartner.toInt()
+                    pbPartnerExpBar.progress = (session.partnerPetXP ?: 0).toInt()
+                    tvPartnerLevelLabel.text = "Level ${session.partnerPetLevel}: ${LevelManager.getStage(session.partnerPetLevel ?: 1)}"
+                    partnerPetImg.setImageResource(getPetResource(session.partnerPetType ?: "Default", session.partnerPetLevel ?: 1))
                 } else {
                     partnerDashboard.visibility = View.GONE
                 }
             }
-    }
-
-    private fun getStage(level: Int) = when {
-        level < 6 -> "Egg"
-        level < 16 -> "Young"
-        else -> "Adult"
     }
 
     private fun syncModeAndTimer(session: Session) {
@@ -474,7 +433,6 @@ class StudyModeActivity : AppCompatActivity() {
         if (session.timerRunning && !isTimerRunning) {
             startTimer()
         } else if (!session.timerRunning && isTimerRunning) {
-            // Force finish if close to zero, otherwise pause
             if (timeLeftInMillis < 5000) {
                 timer?.onFinish()
                 timer?.cancel()
