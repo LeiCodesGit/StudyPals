@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -22,9 +23,12 @@ class AddTaskActivity : AppCompatActivity() {
     private lateinit var etTaskDesc: EditText
     private lateinit var btnCreateTask: Button
     private lateinit var btnCloseTask: ImageButton
+    private lateinit var tvAssignedInitial: TextView
+    private lateinit var tvAssignedName: TextView
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val userRepository = UserRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +41,11 @@ class AddTaskActivity : AppCompatActivity() {
         etTaskDesc = findViewById(R.id.etTaskDesc)
         btnCreateTask = findViewById(R.id.btnCreateTask)
         btnCloseTask = findViewById(R.id.btnCloseTask)
+        tvAssignedInitial = findViewById(R.id.tvAssignedInitial)
+        tvAssignedName = findViewById(R.id.tvAssignedName)
+
+        // Fetch and display user data
+        fetchUserData()
 
         // Handle pre-filled date from CalendarActivity
         val passedDate = intent.getStringExtra("selectedDate")
@@ -55,6 +64,18 @@ class AddTaskActivity : AppCompatActivity() {
 
         btnCreateTask.setOnClickListener {
             saveTaskToFirestore()
+        }
+    }
+
+    private fun fetchUserData() {
+        userRepository.getUserData { user, error ->
+            if (user != null) {
+                val fullName = "${user.firstName} ${user.lastName}".trim()
+                tvAssignedName.text = if (fullName.isNotEmpty()) fullName else user.username
+                tvAssignedInitial.text = (if (user.firstName.isNotEmpty()) user.firstName[0] else user.username.getOrElse(0) { 'U' }).toString().uppercase()
+            } else if (error != null) {
+                Log.e("AddTaskActivity", "Error fetching user data: $error")
+            }
         }
     }
 

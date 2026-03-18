@@ -31,12 +31,16 @@ class ProfileActivity : AppCompatActivity() {
         val btnAdmin = findViewById<Button>(R.id.btnSettings)
         val btnEditProfile = findViewById<Button>(R.id.btnEditProfile)
         val btnAboutUs = findViewById<Button>(R.id.btnNotifications)
+        val profileEgg = findViewById<ImageView>(R.id.profileEgg)
 
         // Fetch real user data
         userRepository.getUserData { user, error ->
             if (user != null) {
                 tvUsername.text = user.username
                 tvEmail.text = user.email
+                
+                // Set pet image based on level and type matching HomeActivity logic
+                setPetImage(profileEgg, user)
 
                 // Show Admin Button ONLY if user is an admin
                 if (user.admin) {
@@ -64,6 +68,28 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
+    }
+
+    private fun setPetImage(imageView: ImageView, user: User) {
+        val petResId = when (user.petType) {
+            "British Shorthair" -> when {
+                user.level >= 16 -> R.drawable.adult_british
+                user.level >= 6 -> R.drawable.baby_british
+                else -> R.drawable.egg_british
+            }
+            "Golden Retriever" -> when {
+                user.level >= 16 -> R.drawable.adult_golden
+                user.level >= 6 -> R.drawable.baby_golden
+                else -> R.drawable.egg_golden
+            }
+            "Maine Coon" -> when {
+                user.level >= 16 -> R.drawable.adult_mainecoon
+                user.level >= 6 -> R.drawable.baby_mainecoon
+                else -> R.drawable.egg_mainecoon
+            }
+            else -> R.drawable.egg_british
+        }
+        imageView.setImageResource(petResId)
     }
 
     private fun showEditProfileDialog(user: User) {
